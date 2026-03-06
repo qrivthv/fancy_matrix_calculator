@@ -25,6 +25,7 @@ public:
     }
     //TODO add dushnye operatory =
     //TODO add dushnye move shtuky
+     // TODO be happy
 
     v_of_LAaG operator+ (const v_of_LAaG & wit) {
         if (n != wit.n || m != wit.m) throw std::runtime_error("Что вы делаете, сударь?.. У вашихъ матрицъ разные размеры!");
