@@ -46,11 +46,13 @@ public:
         if (m != wit.n) throw std::runtime_error("Что вы делаете, сударь?.. У вашихъ матрицъ неверные размеры!");
         std::vector<std::vector<T>> nn = std::vector<std::vector<int>>(n, std::vector<int>(wit.m, 0));
         for (size_t i = 0; i < n; i++){
-            for (size_t j = 0; j < m; j++) {
-
+            for (size_t j = 0; j < wit.m; j++) {
+                for (size_t ii = 0; ii < m; ii++) {
+                    nn[i][j] += aaaa[i][ii]*wit.aaaa[ii][j];
+                }
             }
         }
-        return n;
+        return nn;
     }
 
 
