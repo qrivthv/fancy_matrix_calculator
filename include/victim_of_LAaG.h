@@ -228,7 +228,6 @@ public:
         if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
         return aaaa[ind];
     }
-    friend void swap(v_of_LAaG & a, v_of_LAaG & b);
     void reset() {
         n = 0; m = 0;
         aaaa.resize(0);
