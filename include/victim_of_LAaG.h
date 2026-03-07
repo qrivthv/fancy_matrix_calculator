@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+
+#include "victim_of_LAaG.h"
 class v_of_LAaG;
 class Identity;
 inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
@@ -130,6 +132,12 @@ public:
         return true;
     }
 
+    v_of_LAaG transpose() const {
+        v_of_LAaG a(m, n);
+        for (size_t i = 0; i < n; i++)
+            for (size_t j = 0; j < m; j++) a[j][i] = aaaa[i][j];
+        return a;
+    }
     v_of_LAaG rref() const {
         size_t cur = 0;
         size_t leading = 0;
@@ -197,10 +205,21 @@ public:
         }
         return inv;
     }
+    size_t rank() const {
+        size_t rk = 0;
+        std::vector<double> zero(m, 0.0);
+        v_of_LAaG yay = rref();
+        for (size_t i = 0; i < n; i++) {
+            if (yay[i] == zero) return rk;
+            rk++;
+        }
+        return rk;
+    } //TODO rank table math
 
     size_t get_rows() const { return n; }
     size_t get_cols() const { return m; }
     std::vector<std::vector<double>> get_raw_matrix() const {return aaaa;}
+    std::vector<std::vector<double>>& get_raw_matrix() {return aaaa;}
     std::vector<double>& operator[](size_t ind) {
         if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
         return aaaa[ind];
@@ -209,7 +228,7 @@ public:
         if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
         return aaaa[ind];
     }
-
+    friend void swap(v_of_LAaG & a, v_of_LAaG & b);
     void reset() {
         n = 0; m = 0;
         aaaa.resize(0);
@@ -226,7 +245,12 @@ inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a) {
     }
     return out;
 }
-
+void swap(v_of_LAaG & a, v_of_LAaG & b) {
+    v_of_LAaG temp = a;
+    a = b;
+    b = temp;
+    temp.reset();
+}
 class Identity : public v_of_LAaG {
 public:
     Identity() : v_of_LAaG() {}
