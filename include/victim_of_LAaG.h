@@ -1,17 +1,23 @@
 #ifndef FANCY_MATRIX_CALCULATOR_1_VICTIM_OF_LAAG_H
 #define FANCY_MATRIX_CALCULATOR_1_VICTIM_OF_LAAG_H
 #include <iomanip>
+#include <iostream>
 #include <stdexcept>
 #include <vector>
-
+class v_of_LAaG;
+class Identity;
+inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
 double eps = 10e-6;
 class v_of_LAaG {
-private:
+protected:
     std::vector<std::vector<double>> aaaa;
     size_t n;
     size_t m;
 public:
     v_of_LAaG() : aaaa{}, n(0), m(0) {}
+    v_of_LAaG(size_t r) : aaaa{}, n(r), m(r) {
+        aaaa = std::vector<std::vector<double>>(n, std::vector<double>(m, 0));
+    }
     v_of_LAaG(size_t r, size_t col) : aaaa{}, n(r), m(col) {
         aaaa = std::vector<std::vector<double>>(n, std::vector<double>(m, 0));
     }
@@ -42,9 +48,9 @@ public:
         return *this;
     }
     //TODO add dushnye move shtuky
-     // TODO be happy
+    //TODO be happy (nope, not today)
 
-    v_of_LAaG operator+ (const v_of_LAaG & wit) {
+    v_of_LAaG operator+ (const v_of_LAaG & wit) const {
         if (n != wit.n || m != wit.m) throw std::runtime_error("Что вы делаете, сударь?.. У вашихъ матрицъ разные размеры!");
         std::vector<std::vector<double>> nn = aaaa;
         for (size_t i = 0; i < n; i++){
@@ -52,7 +58,7 @@ public:
         }
         return nn;
     }
-    v_of_LAaG operator- (const v_of_LAaG & wit) {
+    v_of_LAaG operator- (const v_of_LAaG & wit) const {
         if (n != wit.n || m != wit.m) throw std::runtime_error("Что вы делаете, сударь?.. У вашихъ матрицъ разные размеры!");
         std::vector<std::vector<double>> nn = aaaa;
         for (size_t i = 0; i < n; i++){
@@ -60,7 +66,7 @@ public:
         }
         return nn;
     }
-    v_of_LAaG operator* (const v_of_LAaG & wit) {
+    v_of_LAaG operator* (const v_of_LAaG & wit) const {
         if (m != wit.n) throw std::runtime_error("Что вы делаете, сударь?.. У вашихъ матрицъ неверные размеры!");
         std::vector<std::vector<double>> nn = std::vector<std::vector<double>>(n, std::vector<double>(wit.m, 0));
         for (size_t i = 0; i < n; i++){
@@ -72,7 +78,7 @@ public:
         }
         return nn;
     }
-    v_of_LAaG operator* (double x) {
+    v_of_LAaG operator* (double x) const {
         std::vector<std::vector<double>> nn = aaaa;
         for (size_t i = 0; i < n; i++){
             for (size_t j = 0; j < m; j++) {
@@ -85,19 +91,19 @@ public:
         return (n == wit.n && m == wit.m && aaaa == wit.aaaa);
     }
 
-    void t(size_t r1, size_t r2) {
+    void t(const size_t& r1, const size_t &r2) {
         if (r1 >= n || r2 >= n) throw std::runtime_error("Сударь, будьте внимательнее!");
         std::vector<double> a = aaaa[r1];
         aaaa[r1] = aaaa[r2];
         aaaa[r2] = a;
     }
-    void l(size_t r1, size_t r2, double lambda) {
+    void l(const size_t& r1, const size_t& r2, const double &lambda) {
         for (size_t j = 0; j < m; j++) {
             aaaa[r1][j] += aaaa[r2][j]*lambda;
-            if (abs(aaaa[r1][j]) < eps) aaaa[r1][j] = 0;
+            if (std::abs(aaaa[r1][j]) < eps) aaaa[r1][j] = 0;
         }
     }
-    void d(size_t r, double lambda) {
+    void d(const size_t &r, const double &lambda) {
         for (size_t j = 0; j < m; j++) {
             if (aaaa[r][j] != 0 && std::abs(lambda - 1/aaaa[r][j]) < eps) { aaaa[r][j] = 1; }
             else aaaa[r][j] *= lambda;
@@ -174,6 +180,23 @@ public:
         }
         return determinism;
     }
+    v_of_LAaG inverse() const {
+        if (m != n) throw std::runtime_error("Сударь, детерминанта для этой матрицы не можетъ быть!");
+        if (det() == 0) throw std::runtime_error("Сударь, детерминанта для этой матрицы не можетъ быть!");
+        v_of_LAaG aaa(n, 2*m);
+        for (size_t i = 0; i < n; i++) {
+            for (size_t j = 0; j < m; j++) aaa[i][j] = aaaa[i][j];
+            aaa[i][i + m] = 1;
+        }
+        aaa = aaa.rref();
+        v_of_LAaG inv(n, m);
+        for (size_t i = 0; i < n; i++) {
+            for (size_t j = 0; j < m; j++) {
+                inv[i][j] = aaa[i][j + m];
+            }
+        }
+        return inv;
+    }
 
     size_t get_rows() const { return n; }
     size_t get_cols() const { return m; }
@@ -197,11 +220,23 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a) {
-    auto b = a[0][0];
     for (size_t i = 0; i < a.get_rows(); i++) {
         for (size_t j = 0; j < a.get_cols(); j++) out << std::setprecision(3) << a[i][j] << "\t";
         out << "\n";
     }
     return out;
 }
+
+class Identity : public v_of_LAaG {
+public:
+    Identity() : v_of_LAaG() {}
+    Identity(size_t r) : v_of_LAaG(r) {
+        for (size_t i = 0; i < n; i++) {
+            aaaa[i][i] = 1;
+        }
+    }
+    ~Identity() {
+        reset();
+    }
+};
 #endif //FANCY_MATRIX_CALCULATOR_1_VICTIM_OF_LAAG_H
