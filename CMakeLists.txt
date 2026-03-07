@@ -8,4 +8,5 @@
     add_executable(
             fancy_calculator main.cpp
             include/victim_of_LAaG.h
+            tests/mat_test.cpp
     )
