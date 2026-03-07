@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
-double eps = 10e-8;
+double eps = 10e-6;
 class v_of_LAaG {
 private:
     std::vector<std::vector<double>> aaaa;
@@ -151,10 +151,37 @@ public:
         }
         return press_rre_F;
     }
+    v_of_LAaG minor(size_t i, size_t j) const {
+        if (i >= n || j >= m) throw std::out_of_range("Сударь, остановитесь!");
+        v_of_LAaG mmm (n - 1, m - 1);
+        double a = 0, b = 0;
+        for (size_t ii = 0; ii < n; ii++) {
+            if (ii == i) {a = 1; continue;}
+            b = 0;
+            for (size_t jj = 0; jj < m; jj++) {
+                if (jj == j) {b = 1; continue;}
+                mmm[ii - a][jj - b] = aaaa[ii][jj];
+            }
+        }
+        return mmm;
+    }
+    double det() const {
+        if (n != m) throw std::runtime_error("Сударь, детерминанта для этой матрицы не можетъ быть!");
+        if (n == 2) return aaaa[0][0]*aaaa[1][1] - aaaa[0][1] * aaaa[1][0];
+        double determinism = 0;
+        for (size_t i = 0; i < n; i++) {
+            determinism += aaaa[i][0]*minor(i, 0).det()*(i%2 == 0 ? 1 : -1);
+        }
+        return determinism;
+    }
 
     size_t get_rows() const { return n; }
     size_t get_cols() const { return m; }
     std::vector<std::vector<double>> get_raw_matrix() const {return aaaa;}
+    std::vector<double>& operator[](size_t ind) {
+        if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
+        return aaaa[ind];
+    }
     std::vector<double> operator[](size_t ind) const {
         if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
         return aaaa[ind];

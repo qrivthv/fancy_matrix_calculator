@@ -1,7 +1,7 @@
 #include "../include/victim_of_LAaG.h"
 #include <iostream>
 void test1() {
-    std::cout << "TEST1\n";
+    std::cout << "TEST1 - RREF\n";
     std::cout << "Starting test1...\n";
     v_of_LAaG a (3, 4, {1, 2, -1, -4, 2, 3, -1, -11, -2, 0, -3, 22});
     std::cout << "Initial matrix created...\n";
@@ -11,9 +11,22 @@ void test1() {
     std::cout << "RREF calculated...\n";
     std::cout << (f == ans ? "Success\n" : "Failed\n");
     std::cout << "-------------------------------------\n\n";
+}
 
+void test2() {
+    std::cout << "TEST2 - DETERMINANT\n";
+    std::cout << "Starting test2...\n";
+    v_of_LAaG a (3, 3, {1, 2, -1, -4, 2, 3, -1, -11, -2});
+    std::cout << "Matrix created...\n";
+    std::cout << a << "\n";
+    double ans = -39.0;
+    double d = a.det();
+    std::cout << "Det calculated\n";
+    std::cout << (d == ans ? "Success\n" : "Failed\n");
+    std::cout << "-------------------------------------\n\n";
 }
 
 int main() {
     test1();
+    test2();
 }
