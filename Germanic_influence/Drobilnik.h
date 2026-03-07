@@ -19,7 +19,9 @@ public:
         std::ofstream f (Name, std::ios::app);
         partition = std::move(f);
     }
-
+    void Drob(){
+            nameFile.read();
+    }
     ~Drobilnik() {
         if (partition) {
             partition.close();
