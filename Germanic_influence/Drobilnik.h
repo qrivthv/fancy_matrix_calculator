@@ -6,12 +6,12 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
-#include <unordered_map>
+#include <map>
 
 enum Language {PreReform, PostReform};
 class Perevodchik {
 private:
-    std::unordered_map<std::string, int> slovar;
+    std::map<std::string, int> slovar;
     Language currentLanguage;
 public:
     Perevodchik() {
