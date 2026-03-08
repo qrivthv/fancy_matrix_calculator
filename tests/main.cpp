@@ -6,6 +6,8 @@ TEST(matrix_test, computes_rref_correctly) {
     v_of_LAaG const ans (3, 4, {1, 0, 0, -8, 0, 1, 0, 1, 0, 0, 1, -2});
     v_of_LAaG f = a.rref();
     EXPECT_EQ(ans, f);
+    a = v_of_LAaG(3, 3, {8, 8, -8, -8,-12, 16, -4, -8, 12});
+    EXPECT_EQ(a.rref(), v_of_LAaG(3, 3, {1, 0, 1, 0, 1, -2, 0, 0, 0}));
 }
 
 TEST(matrix_test, computes_det_correctly) {

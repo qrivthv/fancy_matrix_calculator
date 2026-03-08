@@ -13,6 +13,7 @@ public:
     virtual void d(const size_t &r, const double &lambda) = 0;
     virtual double det() const = 0;
     virtual size_t rank() const = 0;
+    virtual double trace() const = 0;
     virtual size_t get_rows() const  = 0;
     virtual size_t get_cols() const  = 0;
     virtual std::vector<std::vector<double>> get_raw_matrix() const  = 0;
@@ -169,6 +170,7 @@ public:
                 }
                 if (leading == press_rre_F.m) break;
             }
+            if (leading == press_rre_F.m) break;
             press_rre_F.t(cur, i);
 
             if (press_rre_F.aaaa[i][leading] != 0) press_rre_F.d(i, (1.0/press_rre_F.aaaa[i][leading]));
@@ -230,6 +232,11 @@ public:
         }
         return rk;
     } //TODO rank table math
+    double trace() const override {
+        double tr = 0;
+        for (int i = 0; i < std::min(n, m); i++) tr += aaaa[i][i];
+        return tr;
+    }
 
     size_t get_rows() const override { return n; }
     size_t get_cols() const override { return m; }
