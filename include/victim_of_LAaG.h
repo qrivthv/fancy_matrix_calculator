@@ -9,7 +9,7 @@
 class v_of_LAaG;
 class Identity;
 inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
-double eps = 10e-6;
+constexpr double eps = 10e-6;
 class v_of_LAaG {
 protected:
     std::vector<std::vector<double>> aaaa;
@@ -244,7 +244,7 @@ inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a) {
     }
     return out;
 }
-void swap(v_of_LAaG & a, v_of_LAaG & b) {
+inline void swap(v_of_LAaG & a, v_of_LAaG & b) {
     v_of_LAaG temp = a;
     a = b;
     b = temp;
