@@ -10,7 +10,7 @@ private:
 	std::pair<std::string, int> match;
 	double level;
 public:
-	explicit Lookalikeness(const std::string s, const std::vector<std::pair<std::string, int>>& v) : written(s), match(std::make_pair("temp", 0)), level(0) {
+	Lookalikeness(const std::string s, const std::vector<std::pair<std::string, int>>& v) : written(s), match(std::make_pair("temp", 0)), level(0) {
 		for (std::pair<std::string, int> t : v) {
 			unsigned long f = std::min(t.first.size(), written.size());
 			unsigned long score = 0;

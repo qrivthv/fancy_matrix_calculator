@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <sstream>
 #include <map>
+#include <vector>
 
 enum Language {PreReform, PostReform};
 class Perevodchik {
@@ -43,7 +44,7 @@ public:
         catch (const std::invalid_argument&) {
             std::cout << "Сударь, первая строка это не цифра!\n";
         }
-        std::unordered_map<std::string, int> temp;
+        std::map<std::string, int> temp;
         for (int i = 1; i < (x+1); i++) {
             std::getline(Source, s);
             std::stringstream ss(s);
@@ -55,6 +56,15 @@ public:
         slovar = std::move(temp);
         currentLanguage = l;
         Source.close();
+    }
+    std::vector<std::pair<std::string, int>> CreateVector(char l) {
+        std::vector<std::pair<std::string, int>> v;
+        for (std::pair<std::string, int> t : slovar) {
+            if (t.first[0] == l) {
+                v.push_back(t);
+            }
+        }
+        return v;
     }
 };
 #endif //FANCY_MATRIX_CALCULATOR_DROBILNIK_H
