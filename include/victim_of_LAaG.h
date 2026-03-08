@@ -6,11 +6,24 @@
 #include <vector>
 
 #include "victim_of_LAaG.h"
+class abstract_matrix {
+public:
+    virtual void t(const size_t& r1, const size_t &r2) = 0;
+    virtual void l(const size_t& r1, const size_t& r2, const double &lambda) = 0;
+    virtual void d(const size_t &r, const double &lambda) = 0;
+    virtual double det() const = 0;
+    virtual size_t rank() const = 0;
+    virtual size_t get_rows() const  = 0;
+    virtual size_t get_cols() const  = 0;
+    virtual std::vector<std::vector<double>> get_raw_matrix() const  = 0;
+    virtual std::vector<double> operator[](size_t ind) const = 0;
+    virtual ~abstract_matrix() = default;
+};
 class v_of_LAaG;
 class Identity;
 inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
 constexpr double eps = 10e-6;
-class v_of_LAaG {
+class v_of_LAaG : public abstract_matrix {
 protected:
     std::vector<std::vector<double>> aaaa;
     size_t n;
@@ -89,23 +102,25 @@ public:
         }
         return nn;
     }
-     bool operator==(const v_of_LAaG & wit) const {
+    bool operator==(const v_of_LAaG & wit) const {
         return (n == wit.n && m == wit.m && aaaa == wit.aaaa);
     }
 
-    void t(const size_t& r1, const size_t &r2) {
+    void t(const size_t& r1, const size_t &r2) override {
         if (r1 >= n || r2 >= n) throw std::runtime_error("Сударь, будьте внимательнее!");
         std::vector<double> a = aaaa[r1];
         aaaa[r1] = aaaa[r2];
         aaaa[r2] = a;
     }
-    void l(const size_t& r1, const size_t& r2, const double &lambda) {
+    void l(const size_t& r1, const size_t& r2, const double &lambda) override {
+        if (r1 >= n || r2 >= n) throw std::runtime_error("Сударь, будьте внимательнее!");
         for (size_t j = 0; j < m; j++) {
             aaaa[r1][j] += aaaa[r2][j]*lambda;
             if (std::abs(aaaa[r1][j]) < eps) aaaa[r1][j] = 0;
         }
     }
-    void d(const size_t &r, const double &lambda) {
+    void d(const size_t &r, const double &lambda) override {
+        if (r >= n) throw std::runtime_error("Сударь, будьте внимательнее!");
         for (size_t j = 0; j < m; j++) {
             if (aaaa[r][j] != 0 && std::abs(lambda - 1/aaaa[r][j]) < eps) { aaaa[r][j] = 1; }
             else aaaa[r][j] *= lambda;
@@ -179,7 +194,7 @@ public:
         }
         return mmm;
     }
-    double det() const {
+    double det() const override {
         if (n != m) throw std::runtime_error("Сударь, детерминанта для этой матрицы не можетъ быть!");
         if (n == 2) return aaaa[0][0]*aaaa[1][1] - aaaa[0][1] * aaaa[1][0];
         double determinism = 0;
@@ -205,7 +220,7 @@ public:
         }
         return inv;
     }
-    size_t rank() const {
+    size_t rank() const override  {
         size_t rk = 0;
         std::vector<double> zero(m, 0.0);
         v_of_LAaG yay = rref();
@@ -216,15 +231,15 @@ public:
         return rk;
     } //TODO rank table math
 
-    size_t get_rows() const { return n; }
-    size_t get_cols() const { return m; }
-    std::vector<std::vector<double>> get_raw_matrix() const {return aaaa;}
+    size_t get_rows() const override { return n; }
+    size_t get_cols() const override { return m; }
+    std::vector<std::vector<double>> get_raw_matrix() const override {return aaaa;}
     std::vector<std::vector<double>>& get_raw_matrix() {return aaaa;}
     std::vector<double>& operator[](size_t ind) {
         if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
         return aaaa[ind];
     }
-    std::vector<double> operator[](size_t ind) const {
+    std::vector<double> operator[](size_t ind) const override {
         if (ind >= n) throw std::out_of_range("Сударь, остановитесь");
         return aaaa[ind];
     }
@@ -232,7 +247,7 @@ public:
         n = 0; m = 0;
         aaaa.resize(0);
     }
-    ~v_of_LAaG() {
+    ~v_of_LAaG() override {
       reset();
     }
 };
