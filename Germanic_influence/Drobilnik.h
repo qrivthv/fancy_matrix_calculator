@@ -32,7 +32,7 @@ public:
             std::fstream Source("OperationsPostReform", std::ios::in);
         }
         if (!Source.is_open()) {
-            throw std::runtime_error("Cannot open file");
+            throw std::runtime_error("Сударь, у вас нету доступа к документу!\n");
         }
         std::string s;
         std::getline(Source, s);
@@ -41,7 +41,7 @@ public:
             x = std::stoi(s);
         }
         catch (const std::invalid_argument&) {
-            std::cout << "First line is not int\n";
+            std::cout << "Сударь, первая строка это не цифра!\n";
         }
         std::unordered_map<std::string, int> temp;
         for (int i = 1; i < (x+1); i++) {
