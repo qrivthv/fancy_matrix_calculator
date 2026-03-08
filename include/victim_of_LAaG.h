@@ -20,10 +20,14 @@ public:
     virtual std::vector<double> operator[](size_t ind) const = 0;
     virtual ~abstract_matrix() = default;
 };
+
 class v_of_LAaG;
 class Identity;
+
 inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
+
 constexpr double eps = 10e-6;
+
 class v_of_LAaG : public abstract_matrix {
 protected:
     std::vector<std::vector<double>> aaaa;
@@ -63,8 +67,6 @@ public:
         m = data.m;
         return *this;
     }
-    //TODO add dushnye move shtuky
-    //TODO be happy (nope, not today)
 
     v_of_LAaG operator+ (const v_of_LAaG & wit) const {
         if (n != wit.n || m != wit.m) throw std::runtime_error("Что вы делаете, сударь?.. У вашихъ матрицъ разные размеры!");
@@ -98,6 +100,15 @@ public:
         std::vector<std::vector<double>> nn = aaaa;
         for (size_t i = 0; i < n; i++){
             for (size_t j = 0; j < m; j++) {
+                nn[i][j] *=x;
+            }
+        }
+        return nn;
+    }
+    friend v_of_LAaG operator* (double x, const v_of_LAaG & t) {
+        std::vector<std::vector<double>> nn = t.aaaa;
+        for (size_t i = 0; i < t.n; i++){
+            for (size_t j = 0; j < t.m; j++) {
                 nn[i][j] *=x;
             }
         }
@@ -231,7 +242,7 @@ public:
             rk++;
         }
         return rk;
-    } //TODO rank table math
+    } //TODO rank table match
     double trace() const override {
         double tr = 0;
         for (int i = 0; i < std::min(n, m); i++) tr += aaaa[i][i];
@@ -261,7 +272,7 @@ public:
 
 inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a) {
     for (size_t i = 0; i < a.get_rows(); i++) {
-        for (size_t j = 0; j < a.get_cols(); j++) out << std::setprecision(3) << a[i][j] << "\t";
+        for (size_t j = 0; j < a.get_cols(); j++) out << std::setprecision(6) << a[i][j] << "\t";
         out << "\n";
     }
     return out;
@@ -272,6 +283,7 @@ inline void swap(v_of_LAaG & a, v_of_LAaG & b) {
     b = temp;
     temp.reset();
 }
+
 class Identity : public v_of_LAaG {
 public:
     Identity() : v_of_LAaG() {}
@@ -284,4 +296,5 @@ public:
         reset();
     }
 };
+
 #endif //FANCY_MATRIX_CALCULATOR_1_VICTIM_OF_LAAG_H
