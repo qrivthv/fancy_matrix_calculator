@@ -8,6 +8,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <cctype>
 
 enum Language {PreReform, PostReform};
 class Perevodchik {
@@ -57,14 +58,15 @@ public:
         currentLanguage = l;
         Source.close();
     }
-    std::vector<std::pair<std::string, int>> CreateVector(char l) {
+    std::vector<std::pair<std::string, int>> CreateVector(const char& l) const {
         std::vector<std::pair<std::string, int>> v;
         for (std::pair<std::string, int> t : slovar) {
-            if (t.first[0] == l) {
+            if (std::tolower(t.first[0]) == std::tolower(l)) {
                 v.push_back(t);
             }
         }
         return v;
     }
 };
+
 #endif //FANCY_MATRIX_CALCULATOR_DROBILNIK_H

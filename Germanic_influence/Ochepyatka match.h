@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <cctype>
 
 enum Command {
 	Determinant = 1, Inverse = 2, Transponent = 3, Rank = 4, Multiplication = 6,
@@ -16,12 +17,12 @@ private:
 	std::pair<std::string, int> match;
 	double level;
 public:
-	Lookalikeness(const std::string s, const std::vector<std::pair<std::string, int>>& v) : written(s), match(std::make_pair("temp", 0)), level(0) {
+	Lookalikeness(const std::string& s, const std::vector<std::pair<std::string, int>>& v) : written(s), match(std::make_pair("temp", 0)), level(0) {
 		for (std::pair<std::string, int> t : v) {
 			unsigned long f = std::min(t.first.size(), written.size());
 			unsigned long score = 0;
 			for (unsigned long i = 0; i < f; i++) {
-				if (t.first[i] == written[i]) {
+				if (std::tolower(t.first[i]) == std::tolower(written[i])) {
 					score++;
 				}
 			}
