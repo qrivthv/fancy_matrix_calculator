@@ -3,6 +3,7 @@
 
 #include "Drobilnik.h"
 #include "Ochepyatka match.h"
+#include <variant>
 
 // TODO:: ТЕСТЫ!!!!
 
@@ -13,16 +14,11 @@ public:
     Konverter() {
         language = Perevodchik();
     }
-    std::optional<int> Command(std::istream& in){
+    std::variant<Command, int, bool> CommandFetch(std::istream& in){
         std::string command;
         std::getline(in, command);
-        auto a = Lookalikeness(command, language.CreateVector(command[0])).commandNumber();
-        // TODO:: Что-то сделать с умножением на число......
-        // TODO:: Поменять тип отправки команд на согласованный
-        if (a) {
-            return a;
-        }
-        return -1;
+        std::variant<Command, int, bool> value = Lookalikeness(command, language.CreateVector(command[0])).commandTranslation();
+        return value;
     }
     void ChangeLanguage() {
         language.ChangeLanguage();
