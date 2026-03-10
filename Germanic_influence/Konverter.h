@@ -5,19 +5,14 @@
 #include "Ochepyatka.h"
 #include <variant>
 
-// TODO:: ТЕСТЫ!!!!
-
 class Konverter{
-private:
-    static Perevodchik language;
 public:
-    Konverter() {
-        language = Perevodchik();
-    }
+    inline static Perevodchik language;
+
     static std::variant<Command, int, bool> CommandFetch(std::istream& in){
         std::string command;
         std::getline(in, command);
-        std::variant<Command, int, bool> value = Lookalikeness(command, language.CreateVector(command[0])).commandTranslation();
+        std::variant<Command, int, bool> value = Lookalikeness(command, language.CreateSlovar()).commandTranslation();
         return value;
     }
     static void ChangeLanguage() {

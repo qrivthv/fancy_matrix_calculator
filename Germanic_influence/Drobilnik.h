@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <sstream>
 #include <map>
-#include <vector>
 #include <cctype>
+#include <stdexcept>
 
 enum Language {PreReform, PostReform};
 class Perevodchik {
@@ -30,12 +30,12 @@ public:
     void SetLanguage(Language l) {
         std::fstream Source;
         if (l == PreReform) {
-            std::fstream Source("OperationsPreReform", std::ios::in);
+            Source.open("OperationsPreReform", std::ios::in);
         } else {
-            std::fstream Source("OperationsPostReform", std::ios::in);
+            Source.open("OperationsPostReform", std::ios::in);
         }
         if (!Source.is_open()) {
-            throw std::runtime_error("Сударь, у вас нету доступа к документу!\n");
+            throw std::runtime_error("Сударь, у вас нету доступа к документу!\n No document access");
         }
         std::string s;
         std::getline(Source, s);
@@ -44,7 +44,7 @@ public:
             x = std::stoi(s);
         }
         catch (const std::invalid_argument&) {
-            std::cout << "Сударь, первая строка это не цифра!\n";
+            std::cout << "Сударь, первая строка это не цифра!\n First line isn't a number";
         }
         std::map<std::string, int> temp;
         for (int i = 1; i < (x+1); i++) {
@@ -59,14 +59,8 @@ public:
         currentLanguage = l;
         Source.close();
     }
-    std::vector<std::pair<std::string, int>> CreateVector(const char& l) const {
-        std::vector<std::pair<std::string, int>> v;
-        for (std::pair<std::string, int> t : slovar) {
-            if (std::tolower(t.first[0]) == std::tolower(l)) {
-                v.push_back(t);
-            }
-        }
-        return v;
+    const std::map<std::string, int> CreateSlovar() const {
+        return slovar;
     }
 };
 
