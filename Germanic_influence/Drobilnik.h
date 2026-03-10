@@ -46,16 +46,15 @@ public:
         catch (const std::invalid_argument&) {
             std::cout << "Сударь, первая строка это не цифра!\n First line isn't a number";
         }
-        std::map<std::string, int> temp;
+        slovar.clear();
         for (int i = 1; i < (x+1); i++) {
             std::getline(Source, s);
             std::stringstream ss(s);
             std::string word;
             while (std::getline(ss, word, ',')) {
-                temp.emplace(word,i);
+                slovar.emplace(word,i);
             }
         }
-        slovar = std::move(temp);
         currentLanguage = l;
         Source.close();
     }
