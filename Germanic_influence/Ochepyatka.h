@@ -55,7 +55,7 @@ public:
         }
         return false;
     }
-    int LevenshteinDistance(const std::string& s1, const std::string& s2){
+    constexpr static int LevenshteinDistance(const std::string& s1, const std::string& s2){
         int m = s1.length();
         int n = s2.length();
         std::vector<int> prevRow(n + 1);
