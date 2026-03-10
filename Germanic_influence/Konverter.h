@@ -7,17 +7,16 @@
 
 class Konverter{
 public:
-    inline static Perevodchik language;
+    inline static Perevodchik Vocab;
 
-    static std::variant<Command, int, bool> CommandFetch(std::istream& in){
-        std::string command;
-        std::getline(in, command);
-        std::variant<Command, int, bool> value = Lookalikeness(command, language.CreateSlovar()).commandTranslation();
+    static std::variant<Command, int, bool> CommandFetch(const std::string& s){
+        std::variant<Command, int, bool> value = Lookalikeness(s, Vocab.CreateSlovar()).commandTranslation();
         return value;
     }
     static void ChangeLanguage() {
-        language.Change();
+        Vocab.Change();
     }
 };
+
 
 #endif //FANCY_MATRIX_CALCULATOR_KONVERTER_H

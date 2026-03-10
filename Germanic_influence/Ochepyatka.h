@@ -6,6 +6,7 @@
 #include <variant>
 #include <cctype>
 #include <algorithm>
+#include <vector>
 
 enum Command {
     Determinant = 1, Inverse = 2, Transpose = 3, Rank = 4, Multiplication = 6,
@@ -16,26 +17,27 @@ class Lookalikeness{
 private:
     std::string written;
     std::pair<std::string, int> match;
-    double level;
+    int Levenshtein;
 public:
-    Lookalikeness(const std::string& s,const std::map<std::string, int>& m) : written(s), match(std::make_pair("temp", 0)), level(0) {
+    Lookalikeness(const std::string& s,const std::map<std::string, int>& m) : written(s), match(std::make_pair("temp", 0)), Levenshtein(100) {
         for (std::pair<std::string, int> t : m) {
-            unsigned long f = std::min(t.first.size(), written.size());
-            unsigned long score = 0;
-            for (unsigned long i = 0; i < f; i++) {
-                if (std::tolower(t.first[i]) == std::tolower(written[i])) {
-                    score++;
-                }
+            std::string suspect;
+            for (char i : t.first) {
+                suspect = suspect + (char)std::tolower(i);
             }
-            score = static_cast<double>(score) / written.size();
-            if (level < score) {
-                level = score;
+            std::string Raskolnikov;
+            for (char i : written) {
+                Raskolnikov = Raskolnikov + (char)std::tolower(i);
+            }
+            int l = LevenshteinRecursive(suspect, Raskolnikov);
+            if (l < Levenshtein) {
+                Levenshtein = l;
                 match = t;
             }
         }
     }
     std::variant<Command, int, bool> commandTranslation() {
-        if (level > 0.7) {
+        if (Levenshtein < 4) {
             if (match.second != 5){
                 return static_cast<Command>(match.second);
             }
@@ -46,14 +48,43 @@ public:
                         s += i;
                     }
                 }
-                if (s != "") {
+                if (!s.empty()) {
                     return std::stoi(s);
                 } else {
-                    return static_cast<Command>(5);
+                    return static_cast<Command>(6);
                 }
             }
         }
         return false;
+    }
+    int LevenshteinRecursive(const std::string& s1, const std::string& s2){
+        int m = s1.length();
+        int n = s2.length();
+        std::vector<int> prevRow(n + 1, 0);
+        std::vector<int> currRow(n + 1, 0);
+        for (int j = 0; j <= n; j++) {
+            prevRow[j] = j;
+        }
+        for (int i = 1; i <= m; i++) {
+            currRow[0] = i;
+            for (int j = 1; j <= n; j++) {
+                if (s1[i - 1] == s1[j - 1]) {
+                    currRow[j] = prevRow[j - 1];
+                }
+                else {
+                    currRow[j] = 1
+                                + std::min(
+
+                                    currRow[j - 1],
+                                    std::min(
+                                        prevRow[j],
+                                        prevRow[j - 1]));
+                }
+            }
+
+            prevRow = currRow;
+        }
+        return currRow[n];
     }
 };
 

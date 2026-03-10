@@ -59,8 +59,16 @@ public:
         currentLanguage = l;
         Source.close();
     }
-    const std::map<std::string, int> CreateSlovar() const {
+    const std::map<std::string, int>& CreateSlovar() const {
         return slovar;
+    }
+    void What() {
+        if (currentLanguage == PreReform) {
+            std::cout << "Tsar is alive\n";
+        }
+        else {
+            std::cout << "Tsar is dead\n";
+        }
     }
 };
 
