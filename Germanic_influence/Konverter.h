@@ -14,14 +14,14 @@ public:
     Konverter() {
         language = Perevodchik();
     }
-    std::variant<Command, int, bool> CommandFetch(std::istream& in){
+    static std::variant<Command, int, bool> CommandFetch(std::istream& in){
         std::string command;
         std::getline(in, command);
         std::variant<Command, int, bool> value = Lookalikeness(command, language.CreateVector(command[0])).commandTranslation();
         return value;
     }
-    void ChangeLanguage() {
-        language.ChangeLanguage();
+    static void ChangeLanguage() {
+        language.Change();
     }
 };
 

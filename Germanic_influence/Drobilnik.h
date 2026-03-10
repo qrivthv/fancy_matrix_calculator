@@ -17,9 +17,10 @@ private:
     Language currentLanguage;
 public:
     Perevodchik() {
+        currentLanguage = PreReform;
         SetLanguage(PreReform);
     }
-    void ChangeLanguage() {
+    void Change() {
         if (currentLanguage == PreReform) {
             SetLanguage(PostReform);
         } else {
