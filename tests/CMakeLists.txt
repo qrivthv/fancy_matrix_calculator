@@ -12,7 +12,8 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(tests main.cpp)
+add_executable(tests matrix_tests.cpp
+        germanic_tests.cpp)
 
 enable_testing()
 target_link_libraries(tests GTest::gtest_main)

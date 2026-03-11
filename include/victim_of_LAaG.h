@@ -6,6 +6,15 @@
 #include <vector>
 
 #include "victim_of_LAaG.h"
+
+
+class v_of_LAaG;
+class Identity;
+
+inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
+
+constexpr double eps = 10e-6;
+
 class abstract_matrix {
 public:
     virtual void t(const size_t& r1, const size_t &r2) = 0;
@@ -21,12 +30,6 @@ public:
     virtual ~abstract_matrix() = default;
 };
 
-class v_of_LAaG;
-class Identity;
-
-inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
-
-constexpr double eps = 10e-6;
 
 class v_of_LAaG : public abstract_matrix {
 protected:
