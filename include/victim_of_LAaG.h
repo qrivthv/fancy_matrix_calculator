@@ -21,6 +21,8 @@ public:
     virtual void t(const size_t& r1, const size_t &r2) = 0;
     virtual void l(const size_t& r1, const size_t& r2, const double &lambda) = 0;
     virtual void d(const size_t &r, const double &lambda) = 0;
+    virtual v_of_LAaG rref() const = 0;
+    virtual bool is_rref() const = 0;
     virtual double det() const = 0;
     virtual size_t rank() const = 0;
     virtual double trace() const = 0;
@@ -143,7 +145,7 @@ public:
         }
     }
 
-    bool is_rref() const {
+    bool is_rref() const override  {
         bool zero_fl = false;
         size_t last_leading = 0;
         std::vector<double> zero = std::vector<double>(m, 0.0);
@@ -169,7 +171,7 @@ public:
             for (size_t j = 0; j < m; j++) a[j][i] = aaaa[i][j];
         return a;
     }
-    v_of_LAaG rref() const {
+    v_of_LAaG rref() const override  {
         size_t cur = 0;
         size_t leading = 0;
         if (is_rref()) return *this;
@@ -248,7 +250,7 @@ public:
         if (rk < 15 && rk != 0) std::cout << table[rk] << "\n";
         else std::cout << table[15] << "\n";
         return rk;
-    } //TODO rank table match
+    }
     double trace() const override {
         double tr = 0;
         for (int i = 0; i < std::min(n, m); i++) tr += aaaa[i][i];
@@ -290,7 +292,7 @@ inline void swap(v_of_LAaG & a, v_of_LAaG & b) {
     temp.reset();
 }
 
-class Identity : public v_of_LAaG {
+class Identity final : public v_of_LAaG {
 public:
     Identity() : v_of_LAaG() {}
     Identity(size_t r) : v_of_LAaG(r) {
@@ -298,7 +300,15 @@ public:
             aaaa[i][i] = 1;
         }
     }
-    ~Identity() {
+    Identity& operator=(const std::vector<std::vector<double>> &data) = delete;
+    Identity& operator=(const v_of_LAaG &data) = delete;
+
+    bool is_rref() const override { return true; }
+    v_of_LAaG rref() const override{ return static_cast<v_of_LAaG>(*this); }
+    double det() const override { return 1; }
+    size_t rank() const override  { return n; }
+    double trace() const override { return n; }
+    ~Identity() override {
         reset();
     }
 };
