@@ -74,3 +74,14 @@ TEST(matrix_test, computes_trace_correctly) {
     a = v_of_LAaG(3, 2, {1, 2, 3, 4, 5, 6});
     EXPECT_EQ(a.trace(), 5);
 }
+
+TEST(matrix_test, rank_calculation) {
+    v_of_LAaG a (3, 4, {1, 2, -1, -4, 2, 3, -1, -11, -2, 0, -3, 22});
+    v_of_LAaG const ans (3, 4, {1, 0, 0, -8, 0, 1, 0, 1, 0, 0, 1, -2});
+    v_of_LAaG f = a.rref();
+    EXPECT_EQ(a.rank(), 3);
+    a = v_of_LAaG(3, 3, {8, 8, -8, -8,-12, 16, -4, -8, 12});
+    EXPECT_EQ(a.rank(), 2);
+    a = v_of_LAaG(3, 3, {0, 0, 0, 0, 0, 0, 0, 0, 0});
+    EXPECT_EQ(a.rank(), 0);
+}

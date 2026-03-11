@@ -10,4 +10,5 @@
             include/Drobilnik.h
             include/Konverter.h
             include/Ochepyatka.h
+            include/table_of_ranks.h
     )

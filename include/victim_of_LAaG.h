@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "victim_of_LAaG.h"
+#include "table_of_ranks.h"
 
 
 class v_of_LAaG;
@@ -244,6 +245,8 @@ public:
             if (yay[i] == zero) return rk;
             rk++;
         }
+        if (rk < 15 && rk != 0) std::cout << table[rk] << "\n";
+        else std::cout << table[15] << "\n";
         return rk;
     } //TODO rank table match
     double trace() const override {
