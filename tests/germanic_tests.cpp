@@ -34,7 +34,7 @@ TEST(Lang_Test, Correct_language) {
         Konverter::ChangeLanguage();
         EXPECT_EQ(k.Vocab.What(), "Tsar is dead");
 }
-TEST(Lang_Test, Undestands_commands) {
+TEST(Lang_Test, Undestands_commands_pre) {
         std::map<std::string, int> m;
         m["опредѣлитель"] = 1;
         m["инверсія"] = 2;
@@ -49,9 +49,9 @@ TEST(Lang_Test, Undestands_commands) {
         m["узнать ранг"] =4;
         m["табель"] =4;
         m["ранг"] =4;
-        m["преумножить в 5 раз"] =5;
-        m["умножiть на 6"] =5;
-        m["умножiть 7"] =5;
+        m["преумножить в 67 раз"] =5;
+        m["умножiть на 67"] =5;
+        m["умножiть 67"] =5;
         m["переумножить матрицы"] =6;
         m["умножiть матрицы"] =6;
         m["прибавлять матрицы"] = 7;
@@ -73,4 +73,43 @@ TEST(Lang_Test, Undestands_commands) {
         for (const auto& t : m) {
             EXPECT_EQ(GetCommand(Konverter::CommandFetch(t.first)), t.second);
         }
+}
+
+TEST(Lang_Test, Undestands_commands_post) {
+    std::map<std::string, int> m;
+    m["определитель"] = 1;
+    m["детерминант"] =1;
+    m["инверс"] = 2;
+    m["обратная"] = 2;
+    m["обратная матрица"] = 2;
+    m["транспонировать"] = 3;
+    m["транспонированная матрица"] = 3;
+    m["найти ранг"] =4;
+    m["ранг"] =4;
+    m["умножить 67"] =5;
+    m["умножить на 67"] =5;
+    m["умножить на число 67"] = 5;
+    m["умножить матрицы"] =6;
+    m["умножить"] =6;
+    m["перемножить матрицы"] = 6;
+    m["перемножить"] = 6;
+    m["суммировать матрицы"] = 7;
+    m["сложить матрицы"] = 7;
+    m["сложить"] = 7;
+    m["суммировать"] = 7;
+    m["вычесть матрицы"] = 8;
+    m["вычесть"] = 8;
+    m["айдентити"] = 9;
+    m["поменять"] = 10;
+    m["поменять матрицы местами"] = 10;
+    m["поменять матрицы"] = 10;
+    m["след"] = 11;
+    m["трейс"] = 11;
+    m["след матрицы"] = 11;
+    m["отмена"] = 12;
+    m["отменить"] = 12;
+    Konverter::ChangeLanguage();
+    for (const auto& t : m) {
+        EXPECT_EQ(GetCommand(Konverter::CommandFetch(t.first)), t.second);
+    }
 }
