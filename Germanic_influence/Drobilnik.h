@@ -61,12 +61,12 @@ public:
     const std::map<std::string, int>& CreateSlovar() const {
         return slovar;
     }
-    void What() {
+    std::string What() {
         if (currentLanguage == PreReform) {
-            std::cout << "Tsar is alive\n";
+            return "Tsar is alive";
         }
         else {
-            std::cout << "Tsar is dead\n";
+            return "Tsar is dead";
         }
     }
 };
