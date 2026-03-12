@@ -7,6 +7,7 @@
 #include <cctype>
 #include <algorithm>
 #include <vector>
+#include <windows.h>
 
 constexpr int MAX_TYPOS = 5;
 
@@ -17,17 +18,16 @@ enum Command {
 
 class Lookalikeness{
 private:
-    std::string written;
-    std::pair<std::string, int> match;
+    std::u16string written;
+    std::pair<std::u16string, int> match;
     int Levenshtein;
 public:
-    Lookalikeness(const std::string& s,const std::map<std::string, int>& m) : written(s), match(std::make_pair("temp", 0)), Levenshtein(100) {
-        std::string Raskolnikov;
-        for (char i : written) {
-            Raskolnikov = Raskolnikov + (char)std::tolower(i);
-        }
+    Lookalikeness(const std::string& s,const std::map<std::u16string, int>& m) {
+        written = toLowerCase(utf8_to_utf16(s));
+        Levenshtein = 100;
+        match = std::make_pair<std::u16string, int>(utf8_to_utf16(""), 0);
         for (const auto& t : m) {
-            int l = LevenshteinDistance(t.first, Raskolnikov);
+            int l = LevenshteinDistance(t.first, written);
             if (l < Levenshtein) {
                 Levenshtein = l;
                 match = t;
@@ -55,7 +55,7 @@ public:
         }
         return false;
     }
-    int LevenshteinDistance(const std::string& s1, const std::string& s2){
+    int LevenshteinDistance(const std::u16string& s1, const std::u16string& s2){
         int m = s1.length();
         int n = s2.length();
         std::vector<int> prevRow(n + 1);
@@ -83,6 +83,54 @@ public:
             prevRow = currRow;
         }
         return currRow[n];
+    }
+    std::string toLowerCase(std::u16string s)
+    {
+        for (char16_t& c : s)
+        {
+            if (c >= u'А' && c <= u'Я')
+                c += 32;
+            if (c == u'Ѣ') {
+                c = u'ѣ';
+            }
+            if (c == u'I') {
+                c = u'i';
+            }
+        }
+        int size = WideCharToMultiByte(CP_UTF8, 0,
+            (wchar_t*)s.data(), s.size(),
+            nullptr, 0, nullptr, nullptr);
+
+        std::string result(size, 0);
+
+        WideCharToMultiByte(CP_UTF8, 0,
+            (wchar_t*)s.data(), s.size(),
+            result.data(), size, nullptr, nullptr);
+        return result;
+    };
+    static std::u16string utf8_to_utf16(const std::string& input)
+    {
+        int size = MultiByteToWideChar(
+            CP_UTF8,
+            0,
+            input.data(),
+            (int)input.size(),
+            nullptr,
+            0
+        );
+
+        std::u16string result(size, 0);
+
+        MultiByteToWideChar(
+            CP_UTF8,
+            0,
+            input.data(),
+            (int)input.size(),
+            reinterpret_cast<wchar_t*>(result.data()),
+            size
+        );
+
+        return result;
     }
 };
 

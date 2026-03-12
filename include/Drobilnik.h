@@ -10,11 +10,12 @@
 #include <cctype>
 #include <filesystem>
 #include <stdexcept>
+#include "Ochepyatka.h"
 
 enum Language {PreReform, PostReform};
 class Perevodchik {
 private:
-    std::map<std::string, int> slovar;
+    std::map<std::u16string, int> slovar;
     Language currentLanguage;
 public:
     Perevodchik() {
@@ -54,7 +55,7 @@ public:
             std::stringstream ss(s);
             std::string word;
             while (std::getline(ss, word, ',')) {
-                slovar.emplace(word,i);
+                slovar.emplace(Lookalikeness::utf8_to_utf16(word),i);
             }
         }
         currentLanguage = l;
