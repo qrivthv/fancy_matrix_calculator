@@ -59,40 +59,34 @@ class CalcInterface {
 private:
     std::unique_ptr<v_of_LAaG> matA;
     std::unique_ptr<v_of_LAaG> matB;
+    void clear_buffer() {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     void processMatCmd(Command cmd) {
         try {
             switch (cmd) {
                 case Command::Determinant: {
-                    std::cout<<"Введите размеры матрицы"<<'\n';
-                    matA = enterMatrix();
                     std::cout<<matA->det()<<'\n';
                     Logger::getInstance().logInfo("Found determinant of matrix");
                     break;
                 }
                     case Command::Rank:{
-                    std::cout<<"Введите размеры матрицы"<<'\n';
-                    matA = enterMatrix();
                     std::cout<<matA->rank()<<'\n';
                     Logger::getInstance().logInfo("Found rank of matrix");
                     break;
                     }
                 case Command::Inverse: {
-                    std::cout<<"Введите размеры матрицы"<<'\n';
-                    matA = enterMatrix();
                     std::cout<<matA->inverse()<<'\n';
                     Logger::getInstance().logInfo("Found inverse of matrix");
                     break;
                 }
                 case Command::Transpose: {
-                    std::cout<<"Введите размеры матрицы"<<'\n';
-                    matA = enterMatrix();
                     std::cout<<matA->transpose()<<'\n';
                     Logger::getInstance().logInfo("Transposed matrix");
                     break;
                 }
                 case Command::Trace: {
-                    std::cout<<"Введите размеры матрицы"<<'\n';
-                    matA = enterMatrix();
                     std::cout<<matA->trace()<<'\n';
                     Logger::getInstance().logInfo("Found trace of matrix");
                     break;
@@ -103,6 +97,29 @@ private:
                     std::cin>>r;
                     matA = std::make_unique<Identity>(r);
                     std::cout<<*matA<<'\n';
+                    break;
+                }
+                case Command::Sum: {
+                    std::cout<<*matA+*matB<<'\n';
+                    break;
+                }
+                case Command::Multiplication: {
+                    std::cout<<(*matA)*(*matB)<<'\n';
+                    break;
+                }
+                case Command::Swap: {
+                    swap(*matA, *matB);
+                    std::cout<<*matA<<'\n';
+                    std::cout<<*matB<<'\n';
+                    break;
+                }
+                case Command::Difference:{
+                    std::cout<<*matA-*matB<<'\n';
+                    break;
+                }
+                case Command::CancelOperation: {
+                    std::cout<<"Отменено."<<'\n';
+                    break;
                 }
                 default:
                     throw std::runtime_error("cmd not done");
@@ -113,25 +130,26 @@ private:
             Logger::getInstance().logError(e.what());
         }
     }
-    std::unique_ptr<v_of_LAaG> enterMatrix(){
+    std::unique_ptr<v_of_LAaG> enterMatrix(int rows=1, int cols=1,bool neededInput = 1){
         try {
-
-            int rows, cols;
-            std::string input;
-            std::getline(std::cin, input);
-            std::stringstream ss(input);
-            if (!(ss >> rows >> cols)) {
-                Logger::getInstance().logError("Wrong input format of matrix size");
-                throw std::runtime_error("Неверный формат ввода размеров");
-            }
-            std::string smth;
-            if (ss>>smth) {
-                Logger::getInstance().logError("Wrong input format of matrix size");
-                throw std::runtime_error("Неверный формат ввода размеров");
-            }
-            if (rows<=0 or cols<=0) {
-                Logger::getInstance().logError("Not positive matrix size");
-                throw std::runtime_error("Размеры матрицы должны быть положительны");
+            if (neededInput) {
+                std::cout<<"Введите размеры матрицы:"<<'\n';
+                std::string input;
+                std::getline(std::cin, input);
+                std::stringstream ss(input);
+                if (!(ss >> rows >> cols)) {
+                    Logger::getInstance().logError("Wrong input format of matrix size");
+                    throw std::runtime_error("Неверный формат ввода размеров");
+                }
+                std::string smth;
+                if (ss>>smth) {
+                    Logger::getInstance().logError("Wrong input format of matrix size");
+                    throw std::runtime_error("Неверный формат ввода размеров");
+                }
+                if (rows<=0 or cols<=0) {
+                    Logger::getInstance().logError("Not positive matrix size");
+                    throw std::runtime_error("Размеры матрицы должны быть положительны");
+                }
             }
             std::cout<<"Введите матрицу:"<<'\n';
             auto mat = std::make_unique<v_of_LAaG>(rows, cols);
@@ -140,6 +158,7 @@ private:
                     std::cin>>(*mat)[i][j];
                 }
             }
+            clear_buffer();
             return mat;
 
         }
@@ -228,7 +247,12 @@ public:
         Logger::getInstance().logInfo("Start");
         std::cout<<"Добро пожаловать в Fancy Matrix Calculator!\n"
                    " Для просмотра списка возможных команд введите help.\n"
-                   "Введите команду и нажмите Enter"<<'\n';
+                   "Введите 2 матрицы для работы:"<<'\n';
+
+        matA = enterMatrix();
+        matB = enterMatrix();
+        std::cout<<"Вы успешно ввели матрицы!"<<'\n';
+
         std::string cmd;
         while (true) {
             std::getline(std::cin, cmd);
