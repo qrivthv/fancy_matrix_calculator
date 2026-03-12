@@ -7,9 +7,9 @@
 #include <fstream>
 #include <chrono>
 
-#include <windows.h>
-
 #include "victim_of_LAaG.h"
+#include "Konverter.h"
+#include "Ochepyatka.h"
 
 class Logger {
 public:
@@ -329,14 +329,19 @@ private:
             }
         }
         else {
-            /* TODO Добавить возможность писать команды напрямую, наподобие:
-            A+B, A-B, A*B вместо add, mul, sub
-            Добавить возможность присвоения через =
-            пример:
-            A = A + B
-            B = A - B
-            A = transpose A*/
 
+        }
+    }
+    void processInput(const std::string& fullcmd) {
+        auto res = Konverter::CommandFetch(fullcmd);
+        if (std::holds_alternative<Command>(res)) {
+            Command cmd = std::get<Command>(res);
+        }
+        else if (std::holds_alternative<int>(res)) {
+            int x = std::get<int>(res);
+        }
+        else {
+            std::cout<<"Неизвестная команда";
         }
     }
 
@@ -357,7 +362,7 @@ public:
             if (cmd == "exit") {
                 break;
             }
-            processCmd(cmd);
+            processInput(cmd);
         }
     }
     ~CalcInterface() {}
