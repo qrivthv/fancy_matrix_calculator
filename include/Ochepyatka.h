@@ -8,8 +8,9 @@
 #include <algorithm>
 #include <vector>
 #include <windows.h>
+#include <memory>
 
-constexpr int MAX_TYPOS = 5;
+constexpr int MAX_TYPOS = 4;
 
 
 // CAUTION: THERE IS NO SCALAR MULTIPLICATION
@@ -62,13 +63,13 @@ public:
     int LevenshteinDistance(const std::u16string& s1, const std::u16string& s2) {
         int m = s1.length();
         int n = s2.length();
-        std::vector<int> prevRow(n+1);
-        std::vector<int> currRow(n+1);
+        auto prevRow = std::make_shared<std::vector<int>>(n+1);
+        auto currRow = std::make_shared<std::vector<int>>(n+1);
         for (int i = 0; i <= n; i++) {
-            prevRow[i] = i;
+            (*prevRow)[i] = i;
         }
         for (int i = 1; i <= m; i++) {
-            currRow[0] = i;
+            (*currRow)[0] = i;
             for (int j = 1; j <= n; j++) {
                 int substitutionCost;
                 if (s1[i-1] == s2[j-1]) {
@@ -77,15 +78,17 @@ public:
                 else {
                     substitutionCost = 1;
                 }
-                currRow[j] = std::min(
-                                    (currRow[j-1] + 1),
-                                    std::min(
-                                        (prevRow[j] + 1),
-                                        (prevRow[j-1] + substitutionCost)));
+                (*currRow)[j] = std::min(
+                    (*currRow)[j-1] + 1,
+                    std::min(
+                        (*prevRow)[j] + 1,
+                        (*prevRow)[j-1] + substitutionCost
+                        )
+                );
             }
-            prevRow = currRow;
+            std::swap(prevRow, currRow);
         }
-        return currRow[n];
+        return (*prevRow)[n];
     }
     std::u16string toLowerCase(std::u16string s) {
         for (char16_t& c : s){

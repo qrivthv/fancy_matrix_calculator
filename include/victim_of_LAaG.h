@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include "victim_of_LAaG.h"
 #include "table_of_ranks.h"
 
 
