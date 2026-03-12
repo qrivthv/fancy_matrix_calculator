@@ -70,16 +70,18 @@ public:
         for (int i = 1; i <= m; i++) {
             currRow[0] = i;
             for (int j = 1; j <= n; j++) {
+                int substitutionCost;
                 if (s1[i-1] == s2[j-1]) {
-                    currRow[j] = prevRow[j-1];
+                    substitutionCost = 0;
                 }
                 else {
-                    currRow[j] = 1 + std::min(
-                                    currRow[j-1],
-                                    std::min(
-                                        prevRow[j],
-                                        prevRow[j-1]));
+                    substitutionCost = 1;
                 }
+                currRow[j] = std::min(
+                                    (currRow[j-1] + 1),
+                                    std::min(
+                                        (prevRow[j] + 1),
+                                        (prevRow[j-1] + substitutionCost)));
             }
             prevRow = currRow;
         }
