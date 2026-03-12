@@ -333,6 +333,30 @@ private:
         }
     }
     void processInput(const std::string& fullcmd) {
+
+        std::stringstream ss(fullcmd);
+        std::string s;
+        ss>>s;
+        if (s == "enter") {
+            processCmd(fullcmd);
+            return;
+        }
+        else if (s == "print") {
+            processCmd(fullcmd);
+            return;
+        }
+        else if (s=="help") {
+            processCmd(fullcmd);
+            return;
+        }
+        else if (s == "exit") {
+            return;
+        }
+        else if (s.empty()) {
+            return;
+        }
+
+
         auto res = Konverter::CommandFetch(fullcmd);
         if (std::holds_alternative<Command>(res)) {
             Command cmd = std::get<Command>(res);
