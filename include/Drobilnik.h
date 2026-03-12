@@ -61,7 +61,7 @@ public:
         currentLanguage = l;
         Source.close();
     }
-    const std::map<std::u16string, int>& CreateSlovar() const {
+    std::map<std::u16string, int>& CreateSlovar() {
         return slovar;
     }
     std::string What() {
