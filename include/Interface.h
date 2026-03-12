@@ -69,9 +69,43 @@ private:
                     Logger::getInstance().logInfo("Found determinant of matrix");
                     break;
                 }
-
+                    case Command::Rank:{
+                    std::cout<<"Введите размеры матрицы"<<'\n';
+                    matA = enterMatrix();
+                    std::cout<<matA->rank()<<'\n';
+                    Logger::getInstance().logInfo("Found rank of matrix");
+                    break;
+                    }
+                case Command::Inverse: {
+                    std::cout<<"Введите размеры матрицы"<<'\n';
+                    matA = enterMatrix();
+                    std::cout<<matA->inverse()<<'\n';
+                    Logger::getInstance().logInfo("Found inverse of matrix");
+                    break;
+                }
+                case Command::Transpose: {
+                    std::cout<<"Введите размеры матрицы"<<'\n';
+                    matA = enterMatrix();
+                    std::cout<<matA->transpose()<<'\n';
+                    Logger::getInstance().logInfo("Transposed matrix");
+                    break;
+                }
+                case Command::Trace: {
+                    std::cout<<"Введите размеры матрицы"<<'\n';
+                    matA = enterMatrix();
+                    std::cout<<matA->trace()<<'\n';
+                    Logger::getInstance().logInfo("Found trace of matrix");
+                    break;
+                }
+                case Command::Identity:{
+                    std::cout<<"Введите размеры желаемой матрицы:"<<'\n';
+                    int r;
+                    std::cin>>r;
+                    matA = std::make_unique<Identity>(r);
+                    std::cout<<*matA<<'\n';
+                }
                 default:
-                    throw std::runtime_error("Команда не реализована");
+                    throw std::runtime_error("cmd not done");
             }
         }
         catch (std::exception& e) {
