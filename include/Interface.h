@@ -7,9 +7,8 @@
 #include <fstream>
 #include <chrono>
 
-#include <windows.h>
-
 #include "victim_of_LAaG.h"
+#include "Konverter.h"
 
 class Logger {
 public:
@@ -54,39 +53,108 @@ private:
         }
     }
 };
+
+
+
 class CalcInterface {
 private:
     std::unique_ptr<v_of_LAaG> matA;
     std::unique_ptr<v_of_LAaG> matB;
-
-    void processCmd(const std::string& fullCmd) {
-        std::stringstream ss(fullCmd);
-        std::string cmd;
-        ss >> cmd;
-        if (cmd == "help") {
-            std::cout<<"тут типа описание всех команд"<< std::endl; //TODO дописать вот это
-            Logger::getInstance().logInfo("Cmd: help"); //TODO дописать все логи
+    void clear_buffer() {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    void processMatCmd(Command cmd) {
+        try {
+            switch (cmd) {
+                case Command::Determinant: {
+                    std::cout<<matA->det()<<'\n';
+                    Logger::getInstance().logInfo("Found determinant of matrix");
+                    break;
+                }
+                    case Command::Rank:{
+                    std::cout<<matA->rank()<<'\n';
+                    Logger::getInstance().logInfo("Found rank of matrix");
+                    break;
+                    }
+                case Command::Inverse: {
+                    std::cout<<matA->inverse()<<'\n';
+                    Logger::getInstance().logInfo("Found inverse of matrix");
+                    break;
+                }
+                case Command::Transpose: {
+                    std::cout<<matA->transpose()<<'\n';
+                    Logger::getInstance().logInfo("Transposed matrix");
+                    break;
+                }
+                case Command::Trace: {
+                    std::cout<<matA->trace()<<'\n';
+                    Logger::getInstance().logInfo("Found trace of matrix");
+                    break;
+                }
+                case Command::Identity:{
+                    std::cout<<"Введите размеры желаемой матрицы:"<<'\n';
+                    int r;
+                    std::cin>>r;
+                    matA = std::make_unique<Identity>(r);
+                    std::cout<<*matA<<'\n';
+                    Logger::getInstance().logInfo("Found identity matrix");
+                    break;
+                }
+                case Command::Sum: {
+                    std::cout<<*matA+*matB<<'\n';
+                    Logger::getInstance().logInfo("Found sum of matrices");
+                    break;
+                }
+                case Command::Multiplication: {
+                    std::cout<<(*matA)*(*matB)<<'\n';
+                    Logger::getInstance().logInfo("Found multiplication of matrices");
+                    break;
+                }
+                case Command::Swap: {
+                    std::swap(matA, matB);
+                    std::cout<<*matA<<'\n';
+                    std::cout<<*matB<<'\n';
+                    Logger::getInstance().logInfo("Swapped matrices");
+                    break;
+                }
+                case Command::Difference:{
+                    std::cout<<*matA-*matB<<'\n';
+                    Logger::getInstance().logInfo("Substracted matrix");
+                    break;
+                }
+                case Command::CancelOperation: {
+                    std::cout<<"Отменено."<<'\n';
+                    Logger::getInstance().logInfo("Operation undone");
+                    break;
+                }
+                default:
+                    throw std::runtime_error("cmd not done");
+            }
         }
-        if (cmd == "enter") {
-            try {
-                std::string m;
-                if (!(ss>>m)) {
-                    Logger::getInstance().logError("No matrix name entered");
-                    throw std::runtime_error("Имя матрицы не было указано");
-                }
-                if (m!="A" && m!="B") {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-                std::cout<<"Введите размеры матрицы через пробел:"<<'\n';
-                int rows, cols;
+        catch (std::exception& e) {
+            std::cerr << e.what() << std::endl;
+            Logger::getInstance().logError(e.what());
+        }
+    }
+    void mul_by_scalar(int x) {
+        std::cout<<(*matA)*x<<'\n';
+        Logger::getInstance().logInfo("Multiplied matrix by scalar");
+    }
+    std::unique_ptr<v_of_LAaG> enterMatrix(int rows=1, int cols=1,bool neededInput = 1){
+        try {
+            if (neededInput) {
+                std::cout<<"Введите размеры матрицы:"<<'\n';
                 std::string input;
-                std::getline(std::cin, input);
+                std::getline(std::cin >> std::ws, input);
                 std::stringstream ss(input);
-                if (!(ss >> rows >> cols)) {
+                int r,c;
+                if (!(ss >> r>> c)) {
                     Logger::getInstance().logError("Wrong input format of matrix size");
                     throw std::runtime_error("Неверный формат ввода размеров");
                 }
+                rows = r;
+                cols = c;
                 std::string smth;
                 if (ss>>smth) {
                     Logger::getInstance().logError("Wrong input format of matrix size");
@@ -96,37 +164,41 @@ private:
                     Logger::getInstance().logError("Not positive matrix size");
                     throw std::runtime_error("Размеры матрицы должны быть положительны");
                 }
-                std::cout<<"Введите матрицу:"<<'\n';
-                if (m == "A") {
-                    matA = std::make_unique<v_of_LAaG>(rows, cols);
-                    for (size_t i = 0; i < rows; i++) {
-                        for (size_t j = 0; j < cols; j++) {
-                            std::cin>>(*matA)[i][j];
-                        }
-                    }
-                    Logger::getInstance().logInfo("Entered matrix "+m);
-                    std::cout<<"Вы успешно ввели матрицу!"<<'\n';
-                }
-                else if (m == "B") {
-                    matB = std::make_unique<v_of_LAaG>(rows, cols);
-                    for (size_t i = 0; i < rows; i++) {
-                        for (size_t j = 0; j < cols; j++) {
-                            std::cin>>(*matB)[i][j];
-                        }
-                    }
-                    Logger::getInstance().logInfo("Entered matrix "+m);
-                    std::cout<<"Вы успешно ввели матрицу!"<<'\n';
-                }
-                else {
-                    std::cout<<"Матрицы "<<m<<" не существует"<<'\n';
-                    Logger::getInstance().logWarning("Attempt to enter not existing matrix.");
-                }
+            }
 
+            std::cout<<"Введите матрицу:"<<'\n';
+            auto mat = std::make_unique<v_of_LAaG>(rows, cols);
+            for (size_t i = 0; i < rows; i++) {
+                for (size_t j = 0; j < cols; j++) {
+                    bool elem_success = 0;
+                    while (!elem_success) {
+                        if (std::cin >> (*mat)[i][j]) {
+                            elem_success = 1;
+                        }
+                        else {
+                            clear_buffer();
+                            std::cout<<"элемент введен не верно, попробуйте еще"<<'\n';
+                        }
+                    }
+                }
             }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+
+            return mat;
+
+        }
+        catch (std::exception& e) {
+            std::cerr<<"Ошибка: " << e.what() << std::endl;
+            Logger::getInstance().logError(std::string(e.what()));
+            return nullptr;
+        }
+    }
+    void processCmd(const std::string& fullCmd) {
+        std::stringstream ss(fullCmd);
+        std::string cmd;
+        ss >> cmd;
+        if (cmd == "help") {
+            std::cout<<"тут типа описание всех команд"<< std::endl; //TODO дописать вот это
+            Logger::getInstance().logInfo("Cmd: help");
         }
 
         else if (cmd == "print") {
@@ -151,192 +223,43 @@ private:
                 Logger::getInstance().logError(std::string(e.what()));
             }
         }
-        else if (cmd == "add") {
-            v_of_LAaG matC = (*matA) + (*matB);
-            std::cout << matC<<'\n';
-            Logger::getInstance().logInfo("Added matrix B to A");
-        }
-        else if (cmd == "sub") {
-            v_of_LAaG matC = (*matA) - (*matB);
-            std::cout << matC<<'\n';
-            Logger::getInstance().logInfo("Substituted matrix B from A");
-        }
-        else if (cmd == "mul") {
-            v_of_LAaG matC = (*matA) * (*matB);
-            std::cout << matC<<'\n';
-            Logger::getInstance().logInfo("Multiplied matrix A by B");
-        }
-        else if (cmd == "mul_by_scalar") {
-            try {
-                std::string m;
-                if (!(ss>>m)) {
-                    Logger::getInstance().logError("No matrix name entered");
-                    throw std::runtime_error("Имя матрицы не было указано");
-                }
-                if (m!="A" && m!="B") {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
 
-                std::cout<<"Введите число:"<<'\n';
-                double x;
-                std::string input;
-                std::getline(std::cin, input);
-                std::stringstream ss(input);
-                if (!(ss >> x)) {
-                    Logger::getInstance().logError("Wrong input format of scalar");
-                    throw std::runtime_error("Скаляр может принимать только численное значение");
-                }
-                std::string smth;
-                if (ss>>smth) {
-                    Logger::getInstance().logError("Wrong input format of scalar");
-                    throw std::runtime_error("Неверный формат ввода скаляра");
-                }
-                if (m == "A") {
-                    v_of_LAaG matC = (*matA) * x;
-                    std::cout << matC<<'\n';
-                    Logger::getInstance().logInfo("Multiplied matrix A by scalar");
-                }
-                else if (m == "B") {
-                    v_of_LAaG matC = (*matB) * x;
-                    std::cout << matC<<'\n';
-                    Logger::getInstance().logInfo("Multiplied matrix B by scalar");
-                }
-                else {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-            }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+    }
+    void processInput(const std::string& fullcmd) {
+
+        std::stringstream ss(fullcmd);
+        std::string s;
+        ss>>s;
+        if (s == "enter") {
+            processCmd(fullcmd);
+            return;
         }
-        else if (cmd == "transpose") {
-            try {
-                std::string m;
-                ss>>m;
-                if (m == "A") {
-                    *matA = matA->transpose();
-                    std::cout<<*matA<<'\n';
-                    Logger::getInstance().logInfo("Transposed matrix A");
-                }
-                else if (m == "B") {
-                    *matB = matB->transpose();
-                    std::cout<<*matB<<'\n';
-                    Logger::getInstance().logInfo("Transposed matrix B");
-                }
-                else {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-            }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+        else if (s == "print") {
+            processCmd(fullcmd);
+            return;
         }
-        else if (cmd == "rref") {
-            try {
-                std::string m;
-                ss>>m;
-                if (m == "A") {
-                    *matA = matA->rref();
-                    std::cout<<*matA<<'\n';
-                    Logger::getInstance().logInfo("Transformed matrix A into RREF");
-                }
-                else if (m == "B") {
-                    *matB = matB->rref();
-                    std::cout<<*matB<<'\n';
-                    Logger::getInstance().logInfo("Transformed matrix B into RREF");
-                }
-                else {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-            }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+        else if (s=="help") {
+            processCmd(fullcmd);
+            return;
         }
-        else if (cmd == "det") {
-            try {
-                std::string m;
-                ss>>m;
-                if (m == "A") {
-                    std::cout<<matA->det()<<'\n';
-                    Logger::getInstance().logInfo("Found determinant of matrix A");
-                }
-                else if (m == "B") {
-                    std::cout<<matB->det()<<'\n';
-                    Logger::getInstance().logInfo("Found determinant of matrix B");
-                }
-                else {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-            }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+        else if (s == "exit") {
+            return;
         }
-        else if (cmd == "inv") {
-            try {
-                std::string m;
-                ss>>m;
-                if (m == "A") {
-                    *matA = matA->inverse();
-                    std::cout<<*matA<<'\n';
-                    Logger::getInstance().logInfo("Found inverse of matrix A");
-                }
-                else if (m == "B") {
-                    *matB = matB->inverse();
-                    std::cout<<*matB<<'\n';
-                    Logger::getInstance().logInfo("Found inverse of matrix B");
-                }
-                else {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-            }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+        else if (s.empty()) {
+            return;
         }
-        else if (cmd == "rank") {
-            try {
-                std::string m;
-                ss>>m;
-                if (m == "A") {
-                    std::cout<<matA->rank()<<'\n';
-                    Logger::getInstance().logInfo("Found rank of matrix A");
-                }
-                else if (m == "B") {
-                    std::cout<<matB->rank()<<'\n';
-                    Logger::getInstance().logInfo("Found rank of matrix B");
-                }
-                else {
-                    Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
-                }
-            }
-            catch (std::exception& e) {
-                std::cerr<<"Ошибка: " << e.what() << std::endl;
-                Logger::getInstance().logError(std::string(e.what()));
-            }
+
+        auto res = Konverter::CommandFetch(fullcmd);
+        if (std::holds_alternative<Command>(res)) {
+            Command cmd = std::get<Command>(res);
+            processMatCmd(cmd);
+        }
+        else if (std::holds_alternative<int>(res)) {
+            int x = std::get<int>(res);
+            mul_by_scalar(x);
         }
         else {
-            /* TODO Добавить возможность писать команды напрямую, наподобие:
-            A+B, A-B, A*B вместо add, mul, sub
-            Добавить возможность присвоения через =
-            пример:
-            A = A + B
-            B = A - B
-            A = transpose A*/
-
+            std::cout<<"Unknown cmd"<<std::endl;
         }
     }
 
@@ -350,14 +273,30 @@ public:
         Logger::getInstance().logInfo("Start");
         std::cout<<"Добро пожаловать в Fancy Matrix Calculator!\n"
                    " Для просмотра списка возможных команд введите help.\n"
-                   "Введите команду и нажмите Enter"<<'\n';
+                   "Введите 2 матрицы для работы:"<<'\n';
+        bool success = 0;
+        while (!success) {
+            matA = enterMatrix();
+            if (matA) {
+                success = 1;
+            }
+        }
+        success = 0;
+        while (!success) {
+            matB = enterMatrix();
+            if (matB) {
+                success = 1;
+            }
+        }
+        std::cout<<"Вы успешно ввели матрицы!"<<'\n';
+
         std::string cmd;
         while (true) {
             std::getline(std::cin, cmd);
             if (cmd == "exit") {
                 break;
             }
-            processCmd(cmd);
+            processInput(cmd);
         }
     }
     ~CalcInterface() {}
