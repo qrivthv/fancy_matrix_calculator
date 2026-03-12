@@ -1,18 +1,18 @@
 #ifndef FANCY_MATRIX_CALCULATOR_DROBILNIK_H
 #define FANCY_MATRIX_CALCULATOR_DROBILNIK_H
 
+#include "Ochepyatka.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <algorithm>
 #include <sstream>
 #include <map>
-#include <cctype>
 #include <filesystem>
 #include <stdexcept>
-#include "Ochepyatka.h"
 
 enum Language {PreReform, PostReform};
+
 class Perevodchik {
 private:
     std::map<std::u16string, int> slovar;
