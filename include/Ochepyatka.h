@@ -89,12 +89,12 @@ public:
         {
             if (c >= u'А' && c <= u'Я')
                 c += 32;
-        }
-        if (c == u'Ѣ') {
-            c = u'ѣ';
-        }
-        if (c == u'I') {
-            c = u'i';
+            if (c == u'Ѣ') {
+                c = u'ѣ';
+            }
+            if (c == u'I') {
+                c = u'i';
+            }
         }
         return s;
     }
