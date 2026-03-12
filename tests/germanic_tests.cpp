@@ -9,7 +9,7 @@ int GetCommand(const std::variant<Command, int, bool>& var) {
     return std::visit([](auto&& arg) -> int {
         using T = std::decay_t<decltype(arg)>;
         if constexpr (std::is_same_v<T, Command>) {
-            return arg;
+            return static_cast<int>(arg);
         }
         else if constexpr (std::is_same_v<T, int>) {
             return 5;
@@ -112,4 +112,21 @@ TEST(Lang_Test, Undestands_commands_post) {
     for (const auto& t : m) {
         EXPECT_EQ(GetCommand(Konverter::CommandFetch(t.first)), t.second);
     }
+}
+TEST(Lang_Test, Account_for_Misprints) {
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("альтеръ-эго")), 2);
+
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("альтер-эго")), 2);
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("альтерэго")), 2);
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("альтеэго")), 2);
+
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("АЛЬТЕРЪ-ЭГО")), 2);
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("АЛЬТЕРЭГО")), 2);
+
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("АЛьТеРЪ-ЭгО")), 2);
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("АЛьТеРЭгО")), 2);
+
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("альтго")), 0);
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("альтеръ-эго123456")), 0);
+    EXPECT_EQ(GetCommand(Konverter::CommandFetch("АЛЬТЕРальтер-эго")), 0);
 }

@@ -23,6 +23,10 @@ TEST(matrix_test, computes_det_correctly) {
     EXPECT_EQ(ans, d);
     a = v_of_LAaG(3, 4, {1, 2, -1, -4, 2, 3, -1, -11, -2, 0, -3, 22});
     EXPECT_THROW(d = a.det(), std::runtime_error);
+    a = v_of_LAaG(3, 3, {1, 0, 0, 0, 5, 0, 0, 0, 100});
+    EXPECT_EQ(a.det(), 500);
+    a = v_of_LAaG(3, 3, {1, 0, 0, 0, 5, 0, 0, 0, 0});
+    EXPECT_EQ(a.det(), 0);
 }
 
 TEST(matrix_test, computes_inverse_correctly) {

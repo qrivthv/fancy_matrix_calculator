@@ -33,9 +33,9 @@ public:
         std::fstream Source;
         std::cout << std::filesystem::current_path() << std::endl;
         if (l == PreReform) {
-            Source.open("../../strings/OperationsPreReform", std::ios::in);
+            Source.open("../../dictionaries/OperationsPreReform", std::ios::in);
         } else {
-            Source.open("../../strings/OperationsPostReform", std::ios::in);
+            Source.open("../../dictionaries/OperationsPostReform", std::ios::in);
         }
         if (!Source.is_open()) {
             throw std::runtime_error("Сударь, у вас нету доступа к документу!\n No document access");

@@ -17,6 +17,8 @@ inline std::ostream& operator<<(std::ostream& out, const v_of_LAaG & a);
 constexpr double eps = 10e-6;
 
 class abstract_matrix {
+protected:
+    virtual bool is_diag() const = 0;
 public:
     virtual void t(const size_t& r1, const size_t &r2) = 0;
     virtual void l(const size_t& r1, const size_t& r2, const double &lambda) = 0;
@@ -39,6 +41,22 @@ protected:
     std::vector<std::vector<double>> aaaa;
     size_t n;
     size_t m;
+    constexpr bool is_diag() const override{ //helper method. user doesn't need it
+        for (size_t i = 0; i < n; i++) {
+            for (size_t j = 0; j < m; j++) {
+                if (i != j && aaaa[i][j] != 0) return false;
+            }
+        }
+        return true;
+    }
+    std::optional<double> diagonal_det() const {
+        if (n != m) return std::nullopt;
+        if (!is_diag()) return std::nullopt;
+        double a = 1;
+        for (size_t i = 0; i < n; i++) a*=aaaa[i][i];
+        return a;
+    }
+
 public:
     v_of_LAaG() : aaaa{}, n(0), m(0) {}
     v_of_LAaG(size_t r) : aaaa{}, n(r), m(r) {
@@ -215,7 +233,11 @@ public:
     }
     double det() const override {
         if (n != m) throw std::runtime_error("Сударь, детерминанта для этой матрицы не можетъ быть!");
+        if (n == 0) throw std::runtime_error("Сударь, детерминанта для этой матрицы не можетъ быть!");
+        if (n == 1) return aaaa[0][0];
         if (n == 2) return aaaa[0][0]*aaaa[1][1] - aaaa[0][1] * aaaa[1][0];
+        auto optimise = diagonal_det();
+        if (optimise.has_value()) return optimise.value();
         double determinism = 0;
         for (size_t i = 0; i < n; i++) {
             determinism += aaaa[i][0]*minor(i, 0).det()*(i%2 == 0 ? 1 : -1);
@@ -293,6 +315,8 @@ inline void swap(v_of_LAaG & a, v_of_LAaG & b) {
 }
 
 class Identity final : public v_of_LAaG {
+protected:
+    constexpr bool is_diag() const override { return true; }
 public:
     Identity() : v_of_LAaG() {}
     Identity(size_t r) : v_of_LAaG(r) {

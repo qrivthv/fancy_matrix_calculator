@@ -9,7 +9,7 @@
 #include <vector>
 #include <windows.h>
 
-constexpr int MAX_TYPOS = 5;
+constexpr int MAX_TYPOS = 4;
 
 
 // CAUTION: THERE IS NO SCALAR MULTIPLICATION
