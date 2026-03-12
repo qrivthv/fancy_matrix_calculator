@@ -55,6 +55,9 @@ private:
         }
     }
 };
+
+
+
 class CalcInterface {
 private:
     std::unique_ptr<v_of_LAaG> matA;
@@ -97,28 +100,34 @@ private:
                     std::cin>>r;
                     matA = std::make_unique<Identity>(r);
                     std::cout<<*matA<<'\n';
+                    Logger::getInstance().logInfo("Found identity matrix");
                     break;
                 }
                 case Command::Sum: {
                     std::cout<<*matA+*matB<<'\n';
+                    Logger::getInstance().logInfo("Found sum of matrices");
                     break;
                 }
                 case Command::Multiplication: {
                     std::cout<<(*matA)*(*matB)<<'\n';
+                    Logger::getInstance().logInfo("Found multiplication of matrices");
                     break;
                 }
                 case Command::Swap: {
-                    swap(*matA, *matB);
+                    std::swap(matA, matB);
                     std::cout<<*matA<<'\n';
                     std::cout<<*matB<<'\n';
+                    Logger::getInstance().logInfo("Swapped matrices");
                     break;
                 }
                 case Command::Difference:{
                     std::cout<<*matA-*matB<<'\n';
+                    Logger::getInstance().logInfo("Substracted matrix");
                     break;
                 }
                 case Command::CancelOperation: {
                     std::cout<<"Отменено."<<'\n';
+                    Logger::getInstance().logInfo("Operation undone");
                     break;
                 }
                 default:
@@ -130,17 +139,24 @@ private:
             Logger::getInstance().logError(e.what());
         }
     }
+    void mul_by_scalar(int x) {
+        std::cout<<(*matA)*x<<'\n';
+        Logger::getInstance().logInfo("Multiplied matrix by scalar");
+    }
     std::unique_ptr<v_of_LAaG> enterMatrix(int rows=1, int cols=1,bool neededInput = 1){
         try {
             if (neededInput) {
                 std::cout<<"Введите размеры матрицы:"<<'\n';
                 std::string input;
-                std::getline(std::cin, input);
+                std::getline(std::cin >> std::ws, input);
                 std::stringstream ss(input);
-                if (!(ss >> rows >> cols)) {
+                int r,c;
+                if (!(ss >> r>> c)) {
                     Logger::getInstance().logError("Wrong input format of matrix size");
                     throw std::runtime_error("Неверный формат ввода размеров");
                 }
+                rows = r;
+                cols = c;
                 std::string smth;
                 if (ss>>smth) {
                     Logger::getInstance().logError("Wrong input format of matrix size");
@@ -151,20 +167,31 @@ private:
                     throw std::runtime_error("Размеры матрицы должны быть положительны");
                 }
             }
+
             std::cout<<"Введите матрицу:"<<'\n';
             auto mat = std::make_unique<v_of_LAaG>(rows, cols);
             for (size_t i = 0; i < rows; i++) {
                 for (size_t j = 0; j < cols; j++) {
-                    std::cin>>(*mat)[i][j];
+                    bool elem_success = 0;
+                    while (!elem_success) {
+                        if (std::cin >> (*mat)[i][j]) {
+                            elem_success = 1;
+                        }
+                        else {
+                            clear_buffer();
+                            std::cout<<"элемент введен не верно, попробуйте еще"<<'\n';
+                        }
+                    }
                 }
             }
-            clear_buffer();
+
             return mat;
 
         }
         catch (std::exception& e) {
             std::cerr<<"Ошибка: " << e.what() << std::endl;
             Logger::getInstance().logError(std::string(e.what()));
+            return nullptr;
         }
     }
     void processCmd(const std::string& fullCmd) {
@@ -173,7 +200,7 @@ private:
         ss >> cmd;
         if (cmd == "help") {
             std::cout<<"тут типа описание всех команд"<< std::endl; //TODO дописать вот это
-            Logger::getInstance().logInfo("Cmd: help"); //TODO дописать все логи
+            Logger::getInstance().logInfo("Cmd: help");
         }
 
         else if (cmd == "print") {
@@ -224,13 +251,14 @@ private:
             return;
         }
 
-        auto res = Konverter::CommandFetch(s);
+        auto res = Konverter::CommandFetch(fullcmd);
         if (std::holds_alternative<Command>(res)) {
             Command cmd = std::get<Command>(res);
             processMatCmd(cmd);
         }
         else if (std::holds_alternative<int>(res)) {
             int x = std::get<int>(res);
+            mul_by_scalar(x);
         }
         else {
             std::cout<<"Unknown cmd"<<std::endl;
@@ -248,9 +276,20 @@ public:
         std::cout<<"Добро пожаловать в Fancy Matrix Calculator!\n"
                    " Для просмотра списка возможных команд введите help.\n"
                    "Введите 2 матрицы для работы:"<<'\n';
-
-        matA = enterMatrix();
-        matB = enterMatrix();
+        bool success = 0;
+        while (!success) {
+            matA = enterMatrix();
+            if (matA) {
+                success = 1;
+            }
+        }
+        success = 0;
+        while (!success) {
+            matB = enterMatrix();
+            if (matB) {
+                success = 1;
+            }
+        }
         std::cout<<"Вы успешно ввели матрицы!"<<'\n';
 
         std::string cmd;
