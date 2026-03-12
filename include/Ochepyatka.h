@@ -11,7 +11,7 @@
 
 constexpr int MAX_TYPOS = 5;
 
-enum Command {
+enum class Command {
     Determinant = 1, Inverse = 2, Transpose = 3, Rank = 4, Multiplication = 6,
     Sum = 7, Difference = 8, Identity = 9, Swap = 10, Trace = 11, CancelOperation = 12
 };
