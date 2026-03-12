@@ -22,7 +22,7 @@ private:
     std::pair<std::u16string, int> match;
     int Levenshtein;
 public:
-    Lookalikeness(const std::string& s,const std::map<std::u16string, int>& m) {
+    Lookalikeness(const std::string& s, std::map<std::u16string, int>& m) {
         written = toLowerCase(utf8_to_utf16(s));
         Levenshtein = 100;
         match = std::make_pair<std::u16string, int>(utf8_to_utf16(""), 0);
@@ -84,32 +84,21 @@ public:
         }
         return currRow[n];
     }
-    std::string toLowerCase(std::u16string s)
-    {
+    std::u16string toLowerCase(std::u16string s) {
         for (char16_t& c : s)
         {
             if (c >= u'А' && c <= u'Я')
                 c += 32;
-            if (c == u'Ѣ') {
-                c = u'ѣ';
-            }
-            if (c == u'I') {
-                c = u'i';
-            }
         }
-        int size = WideCharToMultiByte(CP_UTF8, 0,
-            (wchar_t*)s.data(), s.size(),
-            nullptr, 0, nullptr, nullptr);
-
-        std::string result(size, 0);
-
-        WideCharToMultiByte(CP_UTF8, 0,
-            (wchar_t*)s.data(), s.size(),
-            result.data(), size, nullptr, nullptr);
-        return result;
-    };
-    static std::u16string utf8_to_utf16(const std::string& input)
-    {
+        if (c == u'Ѣ') {
+            c = u'ѣ';
+        }
+        if (c == u'I') {
+            c = u'i';
+        }
+        return s;
+    }
+    static std::u16string utf8_to_utf16(const std::string& input) {
         int size = MultiByteToWideChar(
             CP_UTF8,
             0,
