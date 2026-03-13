@@ -143,47 +143,46 @@ private:
     }
     std::unique_ptr<v_of_LAaG> enterMatrix(int rows=1, int cols=1,bool neededInput = 1){
         try {
-            if (neededInput) {
+            std::string s;
+            if (neededInput == 1) {
                 std::cout<<"Введите размеры матрицы:"<<'\n';
-                std::string input;
-                std::getline(std::cin >> std::ws, input);
-                std::stringstream ss(input);
-                int r,c;
-                if (!(ss >> r>> c)) {
-                    Logger::getInstance().logError("Wrong input format of matrix size");
-                    throw std::runtime_error("Неверный формат ввода размеров");
+                std::getline(std::cin,s);
+                std::stringstream ss(s);
+                if (!(ss>>rows>>cols)) {
+                    Logger::getInstance().logError("Wrong input format");
+                    throw std::runtime_error("Неверный формат ввода");
                 }
-                rows = r;
-                cols = c;
                 std::string smth;
                 if (ss>>smth) {
-                    Logger::getInstance().logError("Wrong input format of matrix size");
-                    throw std::runtime_error("Неверный формат ввода размеров");
+                    Logger::getInstance().logError("Wrong input format");
+                    throw std::runtime_error("Неверный формат ввода");
                 }
-                if (rows<=0 or cols<=0) {
-                    Logger::getInstance().logError("Not positive matrix size");
-                    throw std::runtime_error("Размеры матрицы должны быть положительны");
+                if (rows < 1 || cols < 1) {
+                    Logger::getInstance().logError("Wrong input format");
+                    throw std::runtime_error("Размеры должны быть положительны");
                 }
-            }
+                std::cout<<"Введите элементы матрицы:"<<'\n';
+                auto m = std::make_unique<v_of_LAaG>(rows,cols);
+                for (int i=0; i<rows; i++) {
+                    std::getline(std::cin,s);
+                    std::stringstream ss(s);
 
-            std::cout<<"Введите матрицу:"<<'\n';
-            auto mat = std::make_unique<v_of_LAaG>(rows, cols);
-            for (size_t i = 0; i < rows; i++) {
-                for (size_t j = 0; j < cols; j++) {
-                    bool elem_success = 0;
-                    while (!elem_success) {
-                        if (std::cin >> (*mat)[i][j]) {
-                            elem_success = 1;
-                        }
-                        else {
+                    for (int j=0; j<rows; j++) {
+                        if (!(ss>>(*m)[i][j])) {
                             clear_buffer();
-                            std::cout<<"элемент введен не верно, попробуйте еще"<<'\n';
+                            Logger::getInstance().logError("Wrong input format");
+                            throw std::runtime_error("Неверный формат ввода, попробуйте еще");
                         }
                     }
+                    if (ss>>smth) {
+                        Logger::getInstance().logError("Wrong input format");
+                        throw std::runtime_error("Неверный формат ввода");
+                    }
                 }
-            }
 
-            return mat;
+
+                return m;
+            }
 
         }
         catch (std::exception& e) {
