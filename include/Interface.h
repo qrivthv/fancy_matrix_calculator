@@ -145,8 +145,29 @@ private:
                 case Command::Swap: {
                     save_state();
                     std::swap(matA, matB);
-                    std::cout<<*matA<<'\n';
-                    std::cout<<*matB<<'\n';
+                    auto rowsA = matA->get_rows();
+                    auto rowsB = matB->get_rows();
+                    auto maxx = std::max(rowsA,rowsB);
+                    for (size_t i = 0; i < maxx; i++) {
+                        if (i<rowsA) {
+                            for (size_t j = 0; j < matA->get_cols(); j++) {
+                                std::cout<<(*matA)[i][j]<<'\t';
+                            }
+                        }
+                        else {
+                            for (size_t j=0; j<matA->get_cols(); j++) {
+                                std::cout<<' '<<'\t';
+                            }
+
+                        }
+                        std::cout<<'\t';
+                        if (i<matB->get_rows()) {
+                            for (size_t j=0; j<matB->get_cols(); j++) {
+                                std::cout<<(*matB)[i][j]<<'\t';
+                            }
+                        }
+                        std::cout<<'\n';
+                    }
                     Logger::getInstance().logInfo("Swapped matrices");
                     break;
                 }
@@ -231,7 +252,7 @@ private:
         std::string cmd;
         ss >> cmd;
         if (cmd == "help") {
-            std::cout<<"тут типа описание всех команд"<< std::endl; //TODO дописать вот это
+            std::cout<<"Доступные команды: сложить, умножить, вычесть матрицы, найти ранг, определитель, трейс, транспонировать, найти обратную матрицу, поменять местами, создать айдентити матрицу, отменить действие."<< std::endl;
             Logger::getInstance().logInfo("Cmd: help");
         }
 
