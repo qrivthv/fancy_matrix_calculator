@@ -10,7 +10,7 @@
 #include "victim_of_LAaG.h"
 #include "Konverter.h"
 #include "Drobilnik.h"
-
+#define TESTING
 class Logger {
 public:
     static Logger& getInstance() {
@@ -265,7 +265,11 @@ private:
         std::string cmd;
         ss >> cmd;
         if (cmd == "help") {
-            std::cout<<"Доступные команды:\n сложить,\n умножiть матрицы,\n вычесть матрицы,\n узнать рангъ (табель о рангахъ),\n опредѣлитель,\n путь,\n транспонировать,\n инверсія,\n помѣнять мѣстами,\n создать идентичность (матрицу),\n отмѣна"<< std::endl;
+            if (Konverter::Vocab.What() == "Tsar is alive") {
+                std::cout<<"Доступные команды:\n сложить,\n умножить матрицы,\n вычесть матрицы,\n узнать рангъ (табель о рангахъ),\n опредѣлитель,\n слѣдъ,\n транспонировать,\n инверсія,\n помѣнять мѣстами,\n идентичность (матрицу),\n отмѣна"<< std::endl;
+            } else {
+                std::cout<<"Доступные команды:\n сложить,\n умножить матрицы,\n вычесть матрицы,\n найти ранг,\n определитель,\n след,\n транспонировать,\n обратная матрица,\n поменять матрицы местами,\n айдентити,\n отмена"<< std::endl;
+            }
             Logger::getInstance().logInfo("Cmd: help");
         }
         if (cmd=="changeLang") {
@@ -343,10 +347,28 @@ public:
         matB = std::make_unique<v_of_LAaG>(3,3);
         Logger::getInstance().logInfo("Matrices A and B created");
     }
+#ifdef TESTING
+    friend class CalcInterfaceTest_help_Test;
+    friend class CalcInterfaceTest_sum_works_Test;
+    friend class CalcInterfaceTest_sub_works_Test;
+    friend class CalcInterfaceTest_mul_works_Test;
+    friend class CalcInterfaceTest_inv_works_Test;
+    friend class CalcInterfaceTest_scalar_works_Test;
+    friend class CalcInterfaceTest_unknown_cmd_Test;
+    friend class CalcInterfaceTest_det_Test;
+    friend class CalcInterfaceTest_scalar_Test;
+    friend class CalcInterfaceTest_exit_Test;
+    friend class CalcInterfaceTest_cmd_works_Test;
+    void MatricesTest(std::unique_ptr<v_of_LAaG> mA, std::unique_ptr<v_of_LAaG> mB) {
+        matA = std::move(mA);
+        matB = std::move(mB);
+    }
+#endif
     void run() {
         Logger::getInstance().logInfo("Start");
-        std::cout<<"\nДобро пожаловать въ Fancy Matrix Calculator!\n"
+        std::cout<<"\nДобро пожаловать въ Fancy Matrix Calculator!\n\n"
                    "Для просмотра списка возможныхъ командъ введите help.\n"
+                    "Для смены языка введите changeLang.\n\n"
                    "Введите 2 матрицы для работы:"<<'\n';
         bool success = 0;
         while (!success) {
