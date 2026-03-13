@@ -6,6 +6,7 @@
 #include <sstream>
 #include <fstream>
 #include <chrono>
+#include <stack>
 
 #include "victim_of_LAaG.h"
 #include "Konverter.h"
@@ -60,6 +61,27 @@ class CalcInterface {
 private:
     std::unique_ptr<v_of_LAaG> matA;
     std::unique_ptr<v_of_LAaG> matB;
+    struct State {
+        std::unique_ptr<v_of_LAaG> mA;
+        std::unique_ptr<v_of_LAaG> mB;
+    };
+    std::stack<std::unique_ptr<State>> states_history;
+    void save_state() {
+        auto s = std::make_unique<State>();
+        s->mA = std::make_unique<v_of_LAaG>(*matA);
+        s->mB = std::make_unique<v_of_LAaG>(*matB);
+        states_history.push(std::move(s));
+    }
+    void undo() {
+        if (states_history.empty()) {
+            std::cout<<"Все возможные операции были отменены"<<'\n';
+        }
+        else {
+            matA = std::move(states_history.top()->mA);
+            matB = std::move(states_history.top()->mB);
+            states_history.pop();
+        }
+    }
     void clear_buffer() {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -79,11 +101,15 @@ private:
                     }
                 case Command::Inverse: {
                     std::cout<<matA->inverse()<<'\n';
+                    save_state();
+                    *matA = matA->inverse();
                     Logger::getInstance().logInfo("Found inverse of matrix");
                     break;
                 }
                 case Command::Transpose: {
                     std::cout<<matA->transpose()<<'\n';
+                    save_state();
+                    *matA = matA->transpose();
                     Logger::getInstance().logInfo("Transposed matrix");
                     break;
                 }
@@ -96,6 +122,7 @@ private:
                     std::cout<<"Введите размеры желаемой матрицы:"<<'\n';
                     int r;
                     std::cin>>r;
+                    save_state();
                     matA = std::make_unique<Identity>(r);
                     std::cout<<*matA<<'\n';
                     Logger::getInstance().logInfo("Found identity matrix");
@@ -103,15 +130,20 @@ private:
                 }
                 case Command::Sum: {
                     std::cout<<*matA+*matB<<'\n';
+                    save_state();
+                    *matA = *matA+*matB;
                     Logger::getInstance().logInfo("Found sum of matrices");
                     break;
                 }
                 case Command::Multiplication: {
                     std::cout<<(*matA)*(*matB)<<'\n';
+                    save_state();
+                    *matA = (*matA)*(*matB);
                     Logger::getInstance().logInfo("Found multiplication of matrices");
                     break;
                 }
                 case Command::Swap: {
+                    save_state();
                     std::swap(matA, matB);
                     std::cout<<*matA<<'\n';
                     std::cout<<*matB<<'\n';
@@ -120,10 +152,13 @@ private:
                 }
                 case Command::Difference:{
                     std::cout<<*matA-*matB<<'\n';
+                    save_state();
+                    *matA = *matA-*matB;
                     Logger::getInstance().logInfo("Substracted matrix");
                     break;
                 }
                 case Command::CancelOperation: {
+                    undo();
                     std::cout<<"Отменено."<<'\n';
                     Logger::getInstance().logInfo("Operation undone");
                     break;
