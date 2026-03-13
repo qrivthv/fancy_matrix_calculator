@@ -2,10 +2,6 @@
 #include "../include/Interface.h"
 
 
-TEST(CalcInterfaceTest, just_create) {
-    CalcInterface calc;
-    ASSERT_TRUE(true);
-}
 TEST(CalcInterfaceTest, help) {
     CalcInterface calc;
     calc.processInput("help");
@@ -40,9 +36,11 @@ TEST(CalcInterfaceTest,cmd_works) {
     auto buf = std::cout.rdbuf(output.rdbuf());
     calc.processInput("опредѣлитель");
     calc.processInput("ранг");
-    calc.processInput("путь");
+    calc.processInput("слѣдъ");
+
     std::string result = output.str();
     std::cout.rdbuf(buf);
+
     EXPECT_TRUE(result.find("-2") != std::string::npos);
     EXPECT_TRUE(result.find("5") != std::string::npos);
     EXPECT_TRUE(result.find("2") != std::string::npos);
