@@ -201,7 +201,7 @@ private:
         try {
             std::string s;
             if (neededInput == 1) {
-                std::cout<<"Введите размеры желаемой второй матрицы въ форматѣ (n m), т.е. черезъ пробѣлъ:"<<'\n';
+                std::cout<<"\nВведите размеры желаемой второй матрицы въ форматѣ (n m), т.е. черезъ пробѣлъ:"<<'\n';
                 std::getline(std::cin,s);
                 std::stringstream ss(s);
                 if (!(ss>>rows>>cols)) {
@@ -217,7 +217,7 @@ private:
                     Logger::getInstance().logError("Wrong input format");
                     throw std::runtime_error("Размѣры должны быть положительны");
                 }
-                std::cout<<"Введите элементы матрицы: въ форматѣ матрицы (m элементовъ черезъ пробѣлъ, затемъ переводъ строки, всего n строкъ)"<<'\n';
+                std::cout<<"\nВведите элементы матрицы въ форматѣ таблицы (m элементовъ черезъ пробѣлъ, затемъ переводъ строки, всего n строкъ):"<<'\n';
                 auto m = std::make_unique<v_of_LAaG>(rows,cols);
                 for (int i=0; i<rows; i++) {
                     std::getline(std::cin,s);
