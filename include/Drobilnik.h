@@ -43,6 +43,12 @@ public:
             } else {
                 Source.open("../dictionaries/OperationsPostReform", std::ios::in);
             }
+        }if (!Source.is_open()) {
+            if (l == PreReform) {
+                Source.open("dictionaries/OperationsPreReform", std::ios::in);
+            } else {
+                Source.open("dictionaries/OperationsPostReform", std::ios::in);
+            }
         }
         if (!Source.is_open()) {
             throw std::runtime_error("Сударь, у вас нету доступа к документу!\n No document access");
