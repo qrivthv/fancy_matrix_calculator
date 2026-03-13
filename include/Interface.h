@@ -206,6 +206,8 @@ private:
     }
     void mul_by_scalar(int x) {
         std::cout<<(*matA)*x<<'\n';
+        save_state();
+        *matA = (*matA)*x;
         std::cout<<'-----------------------------';
         Logger::getInstance().logInfo("Multiplied matrix by scalar");
     }
