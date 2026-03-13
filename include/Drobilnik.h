@@ -31,7 +31,7 @@ public:
     }
     void SetLanguage(Language l) {
         std::fstream Source;
-        std::cout << std::filesystem::current_path() << std::endl;
+        std::string a= std::filesystem::current_path().string();
         if (l == PreReform) {
             Source.open("../../dictionaries/OperationsPreReform", std::ios::in);
         } else {
@@ -39,9 +39,9 @@ public:
         }
         if (!Source.is_open()) {
             if (l == PreReform) {
-                Source.open("dictionaries/OperationsPreReform", std::ios::in);
+                Source.open("../dictionaries/OperationsPreReform", std::ios::in);
             } else {
-                Source.open("dictionaries/OperationsPostReform", std::ios::in);
+                Source.open("../dictionaries/OperationsPostReform", std::ios::in);
             }
         }
         if (!Source.is_open()) {
