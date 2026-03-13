@@ -10,7 +10,7 @@
 #include "victim_of_LAaG.h"
 #include "Konverter.h"
 #include "Drobilnik.h"
-
+#define TESTING
 class Logger {
 public:
     static Logger& getInstance() {
@@ -349,6 +349,7 @@ public:
     friend class CalcInterfaceTest_sub_works_Test;
     friend class CalcInterfaceTest_mul_works_Test;
     friend class CalcInterfaceTest_inv_works_Test;
+    friend class CalcInterfaceTest_scalar_works_Test;
     friend class CalcInterfaceTest_unknown_cmd_Test;
     friend class CalcInterfaceTest_det_Test;
     friend class CalcInterfaceTest_scalar_Test;

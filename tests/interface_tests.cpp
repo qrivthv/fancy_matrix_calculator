@@ -114,3 +114,21 @@ TEST(CalcInterfaceTest,inv_works) {
     EXPECT_TRUE(result.find("1") != std::string::npos);
 
 }
+TEST(CalcInterfaceTest,scalar_works) {
+    CalcInterface calc;
+    auto mA = std::make_unique<v_of_LAaG>(2, 2, std::vector<double>{1, 2, 3, 4});
+    auto mB = std::make_unique<v_of_LAaG>(2, 2, std::vector<double>{1, 2, 3, 4});
+    calc.MatricesTest(std::move(mA),std::move(mB));
+    std::stringstream output;
+    auto buf = std::cout.rdbuf(output.rdbuf());
+    calc.processInput("умножить на 5");
+    calc.processInput("print A");
+    std::string result = output.str();
+    std::cout.rdbuf(buf);
+
+    EXPECT_TRUE(result.find("5") != std::string::npos);
+    EXPECT_TRUE(result.find("10") != std::string::npos);
+    EXPECT_TRUE(result.find("15") != std::string::npos);
+    EXPECT_TRUE(result.find("20") != std::string::npos);
+
+}
