@@ -364,6 +364,7 @@ public:
         Logger::getInstance().logInfo("Start");
         std::cout<<"\nДобро пожаловать въ Fancy Matrix Calculator!\n"
                    "Для просмотра списка возможныхъ командъ введите help.\n"
+                    "Для смены языка введите changeLang.\n"
                    "Введите 2 матрицы для работы:"<<'\n';
         bool success = 0;
         while (!success) {
