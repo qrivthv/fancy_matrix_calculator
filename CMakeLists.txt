@@ -2,7 +2,7 @@
     project(fancy_calculator)
 
     add_subdirectory(tests)
-    set(CMAKE_CXX_STANDARD 26)
+    set(CMAKE_CXX_STANDARD 23)
 
     add_executable(
             fancy_calculator main.cpp

@@ -75,7 +75,7 @@ private:
     }
     void undo() {
         if (states_history.empty()) {
-            std::cout<<"Все возможные операции были отменены"<<'\n';
+            std::cout<<"Всѣ возможные операціи были отмѣнены"<<'\n';
         }
         else {
             matA = std::move(states_history.top()->mA);
@@ -125,7 +125,7 @@ private:
                     break;
                 }
                 case Command::Identity:{
-                    std::cout<<"Введите размеры желаемой матрицы:"<<'\n';
+                    std::cout<<"\nВведите размеры желаемой первой матрицы въ форматѣ (n m), т.е. черезъ пробѣлъ:"<<'\n';
                     int r;
                     std::cin>>r;
                     save_state();
@@ -191,12 +191,12 @@ private:
                 }
                 case Command::CancelOperation: {
                     undo();
-                    std::cout<<"Отменено."<<'\n';
+                    std::cout<<"Отмѣнено"<<'\n';
                     Logger::getInstance().logInfo("Operation undone");
                     break;
                 }
                 default:
-                    throw std::runtime_error("Команда не реализована");
+                    throw std::runtime_error("Команда не выполнена");
             }
         }
         catch (std::exception& e) {
@@ -213,23 +213,23 @@ private:
         try {
             std::string s;
             if (neededInput == 1) {
-                std::cout<<"Введите размеры матрицы:"<<'\n';
+                std::cout<<"\nВведите размеры желаемой второй матрицы въ форматѣ (n m), т.е. черезъ пробѣлъ:"<<'\n';
                 std::getline(std::cin,s);
                 std::stringstream ss(s);
                 if (!(ss>>rows>>cols)) {
                     Logger::getInstance().logError("Wrong input format");
-                    throw std::runtime_error("Неверный формат ввода");
+                    throw std::runtime_error("Невѣрный форматъ ввода");
                 }
                 std::string smth;
                 if (ss>>smth) {
                     Logger::getInstance().logError("Wrong input format");
-                    throw std::runtime_error("Неверный формат ввода");
+                    throw std::runtime_error("Невѣрный форматъ ввода");
                 }
                 if (rows < 1 || cols < 1) {
                     Logger::getInstance().logError("Wrong input format");
-                    throw std::runtime_error("Размеры должны быть положительны");
+                    throw std::runtime_error("Размѣры должны быть положительны");
                 }
-                std::cout<<"Введите элементы матрицы:"<<'\n';
+                std::cout<<"\nВведите элементы матрицы въ форматѣ таблицы (m элементовъ черезъ пробѣлъ, затемъ переводъ строки, всего n строкъ):"<<'\n';
                 auto m = std::make_unique<v_of_LAaG>(rows,cols);
                 for (int i=0; i<rows; i++) {
                     std::getline(std::cin,s);
@@ -239,12 +239,12 @@ private:
                         if (!(ss>>(*m)[i][j])) {
                             clear_buffer();
                             Logger::getInstance().logError("Wrong input format");
-                            throw std::runtime_error("Неверный формат ввода, попробуйте еще");
+                            throw std::runtime_error("Невѣрный форматъ ввода");
                         }
                     }
                     if (ss>>smth) {
                         Logger::getInstance().logError("Wrong input format");
-                        throw std::runtime_error("Неверный формат ввода");
+                        throw std::runtime_error("Невѣрный форматъ ввода");
                     }
                 }
 
@@ -264,7 +264,7 @@ private:
         std::string cmd;
         ss >> cmd;
         if (cmd == "help") {
-            std::cout<<"Доступные команды: сложить, умножить, вычесть матрицы, найти ранг, определитель, трейс, транспонировать, найти обратную матрицу, поменять местами, создать айдентити матрицу, отменить действие."<< std::endl;
+            std::cout<<"Доступные команды:\n сложить,\n умножiть матрицы,\n вычесть матрицы,\n узнать рангъ (табель о рангахъ),\n опредѣлитель,\n путь,\n транспонировать,\n инверсія,\n помѣнять мѣстами,\n создать идентичность (матрицу),\n отмѣна"<< std::endl;
             Logger::getInstance().logInfo("Cmd: help");
         }
         else if (cmd == "print") {
@@ -281,7 +281,7 @@ private:
                 }
                 else {
                     Logger::getInstance().logError("Invalid matrix name");
-                    throw std::runtime_error("Неверное имя матрицы. Доступны только матрицы A и B");
+                    throw std::runtime_error("Невѣрное имя матрицы. Доступны только матрицы A и B");
                 }
             }
             catch (std::exception& e) {
@@ -341,8 +341,8 @@ public:
     }
     void run() {
         Logger::getInstance().logInfo("Start");
-        std::cout<<"Добро пожаловать в Fancy Matrix Calculator!\n"
-                   "Для просмотра списка возможных команд введите help.\n"
+        std::cout<<"\nДобро пожаловать въ Fancy Matrix Calculator!\n"
+                   "Для просмотра списка возможныхъ командъ введите help.\n"
                    "Введите 2 матрицы для работы:"<<'\n';
         bool success = 0;
         while (!success) {
@@ -358,7 +358,7 @@ public:
                 success = 1;
             }
         }
-        std::cout<<"Вы успешно ввели матрицы!"<<'\n';
+        std::cout<<"Вы успѣшно ввели матрицы!"<<'\n';
 
         std::string cmd;
         while (true) {

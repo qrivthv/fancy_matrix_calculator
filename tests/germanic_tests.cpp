@@ -70,8 +70,9 @@ TEST(Lang_Test, Undestands_commands_pre) {
         m["vice versa"] = 10;
         m["путь"] = 11;
         m["отмѣна"] = 12;
+        Konverter test1;
         for (const auto& t : m) {
-            EXPECT_EQ(GetCommand(Konverter::CommandFetch(t.first)), t.second);
+            EXPECT_EQ(GetCommand(test1.CommandFetch(t.first)), t.second);
         }
 }
 
@@ -108,9 +109,10 @@ TEST(Lang_Test, Undestands_commands_post) {
     m["след матрицы"] = 11;
     m["отмена"] = 12;
     m["отменить"] = 12;
-    Konverter::ChangeLanguage();
+    Konverter test2;
+    test2.ChangeLanguage();
     for (const auto& t : m) {
-        EXPECT_EQ(GetCommand(Konverter::CommandFetch(t.first)), t.second);
+        EXPECT_EQ(GetCommand(test2.CommandFetch(t.first)), t.second);
     }
 }
 TEST(Lang_Test, Account_for_Misprints) {
