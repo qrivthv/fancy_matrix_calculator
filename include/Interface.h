@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
-#include <chrono>
 #include <stack>
 
 #include "victim_of_LAaG.h"
@@ -92,19 +91,19 @@ private:
             switch (cmd) {
                 case Command::Determinant: {
                     std::cout<<matA->det()<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     Logger::getInstance().logInfo("Found determinant of matrix");
                     break;
                 }
                     case Command::Rank:{
                     std::cout<<matA->rank()<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     Logger::getInstance().logInfo("Found rank of matrix");
                     break;
                     }
                 case Command::Inverse: {
                     std::cout<<matA->inverse()<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     save_state();
                     *matA = matA->inverse();
                     Logger::getInstance().logInfo("Found inverse of matrix");
@@ -112,7 +111,7 @@ private:
                 }
                 case Command::Transpose: {
                     std::cout<<matA->transpose()<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     save_state();
                     *matA = matA->transpose();
                     Logger::getInstance().logInfo("Transposed matrix");
@@ -120,24 +119,24 @@ private:
                 }
                 case Command::Trace: {
                     std::cout<<matA->trace()<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     Logger::getInstance().logInfo("Found trace of matrix");
                     break;
                 }
                 case Command::Identity:{
-                    std::cout<<"\nВведите размеры желаемой первой матрицы въ форматѣ (n m), т.е. черезъ пробѣлъ:"<<'\n';
+                    std::cout<<"\nВведите размеры желаемой первой матрицы въ форматѣ (n), т.е. черезъ пробѣлъ:"<<'\n';
                     int r;
                     std::cin>>r;
                     save_state();
                     matA = std::make_unique<Identity>(r);
                     std::cout<<*matA<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     Logger::getInstance().logInfo("Found identity matrix");
                     break;
                 }
                 case Command::Sum: {
                     std::cout<<*matA+*matB<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     save_state();
                     *matA = *matA+*matB;
                     Logger::getInstance().logInfo("Found sum of matrices");
@@ -145,7 +144,7 @@ private:
                 }
                 case Command::Multiplication: {
                     std::cout<<(*matA)*(*matB)<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     save_state();
                     *matA = (*matA)*(*matB);
                     Logger::getInstance().logInfo("Found multiplication of matrices");
@@ -177,13 +176,13 @@ private:
                         }
                         std::cout<<'\n';
                     }
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     Logger::getInstance().logInfo("Swapped matrices");
                     break;
                 }
                 case Command::Difference:{
                     std::cout<<*matA-*matB<<'\n';
-                    std::cout<<'-----------------------------';
+                    std::cout<<"-----------------------------\n";
                     save_state();
                     *matA = *matA-*matB;
                     Logger::getInstance().logInfo("Substracted matrix");
@@ -208,7 +207,7 @@ private:
         std::cout<<(*matA)*x<<'\n';
         save_state();
         *matA = (*matA)*x;
-        std::cout<<'-----------------------------';
+        std::cout<<"-----------------------------\n";
         Logger::getInstance().logInfo("Multiplied matrix by scalar");
     }
     std::unique_ptr<v_of_LAaG> enterMatrix(int rows=1, int cols=1,bool neededInput = 1){
