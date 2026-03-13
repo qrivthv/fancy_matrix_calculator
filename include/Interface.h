@@ -343,6 +343,18 @@ public:
         matB = std::make_unique<v_of_LAaG>(3,3);
         Logger::getInstance().logInfo("Matrices A and B created");
     }
+#ifdef TESTING
+    friend class CalcInterfaceTest_help_Test;
+    friend class CalcInterfaceTest_unknown_cmd_Test;
+    friend class CalcInterfaceTest_det_Test;
+    friend class CalcInterfaceTest_scalar_Test;
+    friend class CalcInterfaceTest_exit_Test;
+    friend class CalcInterfaceTest_cmd_works_Test;
+    void MatricesTest(std::unique_ptr<v_of_LAaG> mA, std::unique_ptr<v_of_LAaG> mB) {
+        matA = std::move(mA);
+        matB = std::move(mB);
+    }
+#endif
     void run() {
         Logger::getInstance().logInfo("Start");
         std::cout<<"\nДобро пожаловать въ Fancy Matrix Calculator!\n"
