@@ -267,6 +267,9 @@ private:
             std::cout<<"Доступные команды:\n сложить,\n умножiть матрицы,\n вычесть матрицы,\n узнать рангъ (табель о рангахъ),\n опредѣлитель,\n путь,\n транспонировать,\n инверсія,\n помѣнять мѣстами,\n создать идентичность (матрицу),\n отмѣна"<< std::endl;
             Logger::getInstance().logInfo("Cmd: help");
         }
+        if (cmd=="changeLang") {
+            Konverter::ChangeLanguage();
+        }
         else if (cmd == "print") {
             try {
                 std::string m;
