@@ -10,6 +10,7 @@
 
 #include "victim_of_LAaG.h"
 #include "Konverter.h"
+#include "Drobilnik.h"
 
 class Logger {
 public:
@@ -46,7 +47,7 @@ private:
         if (_logFile.is_open()) _logFile.close();
     }
     void writeLog(const std::string& level, const std::string& message) {
-        //TODO Add time of log
+
         std::string log_message = level + ": " + message;
         if (_logFile.is_open()) {
             _logFile << log_message << std::endl;
@@ -91,16 +92,19 @@ private:
             switch (cmd) {
                 case Command::Determinant: {
                     std::cout<<matA->det()<<'\n';
+                    std::cout<<'-----------------------------';
                     Logger::getInstance().logInfo("Found determinant of matrix");
                     break;
                 }
                     case Command::Rank:{
                     std::cout<<matA->rank()<<'\n';
+                    std::cout<<'-----------------------------';
                     Logger::getInstance().logInfo("Found rank of matrix");
                     break;
                     }
                 case Command::Inverse: {
                     std::cout<<matA->inverse()<<'\n';
+                    std::cout<<'-----------------------------';
                     save_state();
                     *matA = matA->inverse();
                     Logger::getInstance().logInfo("Found inverse of matrix");
@@ -108,6 +112,7 @@ private:
                 }
                 case Command::Transpose: {
                     std::cout<<matA->transpose()<<'\n';
+                    std::cout<<'-----------------------------';
                     save_state();
                     *matA = matA->transpose();
                     Logger::getInstance().logInfo("Transposed matrix");
@@ -115,6 +120,7 @@ private:
                 }
                 case Command::Trace: {
                     std::cout<<matA->trace()<<'\n';
+                    std::cout<<'-----------------------------';
                     Logger::getInstance().logInfo("Found trace of matrix");
                     break;
                 }
@@ -125,11 +131,13 @@ private:
                     save_state();
                     matA = std::make_unique<Identity>(r);
                     std::cout<<*matA<<'\n';
+                    std::cout<<'-----------------------------';
                     Logger::getInstance().logInfo("Found identity matrix");
                     break;
                 }
                 case Command::Sum: {
                     std::cout<<*matA+*matB<<'\n';
+                    std::cout<<'-----------------------------';
                     save_state();
                     *matA = *matA+*matB;
                     Logger::getInstance().logInfo("Found sum of matrices");
@@ -137,6 +145,7 @@ private:
                 }
                 case Command::Multiplication: {
                     std::cout<<(*matA)*(*matB)<<'\n';
+                    std::cout<<'-----------------------------';
                     save_state();
                     *matA = (*matA)*(*matB);
                     Logger::getInstance().logInfo("Found multiplication of matrices");
@@ -168,11 +177,13 @@ private:
                         }
                         std::cout<<'\n';
                     }
+                    std::cout<<'-----------------------------';
                     Logger::getInstance().logInfo("Swapped matrices");
                     break;
                 }
                 case Command::Difference:{
                     std::cout<<*matA-*matB<<'\n';
+                    std::cout<<'-----------------------------';
                     save_state();
                     *matA = *matA-*matB;
                     Logger::getInstance().logInfo("Substracted matrix");
@@ -195,6 +206,7 @@ private:
     }
     void mul_by_scalar(int x) {
         std::cout<<(*matA)*x<<'\n';
+        std::cout<<'-----------------------------';
         Logger::getInstance().logInfo("Multiplied matrix by scalar");
     }
     std::unique_ptr<v_of_LAaG> enterMatrix(int rows=1, int cols=1,bool neededInput = 1){
@@ -255,7 +267,6 @@ private:
             std::cout<<"Доступные команды: сложить, умножить, вычесть матрицы, найти ранг, определитель, трейс, транспонировать, найти обратную матрицу, поменять местами, создать айдентити матрицу, отменить действие."<< std::endl;
             Logger::getInstance().logInfo("Cmd: help");
         }
-
         else if (cmd == "print") {
             try {
                 std::string m;
@@ -295,6 +306,10 @@ private:
         }
         else if (s=="help") {
             processCmd(fullcmd);
+            return;
+        }
+        else if (s=="changeLang") {
+            Konverter::ChangeLanguage();
             return;
         }
         else if (s == "exit") {
