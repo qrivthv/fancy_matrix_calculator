@@ -164,7 +164,7 @@ private:
                     break;
                 }
                 default:
-                    throw std::runtime_error("cmd not done");
+                    throw std::runtime_error("Команда не реализована");
             }
         }
         catch (std::exception& e) {
@@ -202,7 +202,7 @@ private:
                     std::getline(std::cin,s);
                     std::stringstream ss(s);
 
-                    for (int j=0; j<rows; j++) {
+                    for (int j=0; j<cols; j++) {
                         if (!(ss>>(*m)[i][j])) {
                             clear_buffer();
                             Logger::getInstance().logError("Wrong input format");
